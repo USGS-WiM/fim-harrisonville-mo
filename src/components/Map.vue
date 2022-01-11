@@ -86,5 +86,26 @@ export default {
       alert("Click!");
     },
   },
+  computed: {
+    durationValue: {
+        get() {
+          return this.$store.state.durationValue;
+        },
+    },
+    frequencyValue: {
+        get() {
+          return this.$store.state.frequencyValue;
+        },
+    },
+  }
 };
 </script>
+<style>
+  #map {
+    height: 100%;
+    width: 100%;
+    font-family: "Public Sans", sans-serif;
+    /* Set z-index so sidebar appears above map on mobile */
+    z-index: 1;
+  }
+</style>
