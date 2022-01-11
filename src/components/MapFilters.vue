@@ -70,7 +70,7 @@
         durationValues: [0.5, 1, 2, 3, 4, 6, 8, 12, 24],
         frequencyValues: [1, 2, 5, 10, 50, 100, 200, 500, 1000],
         durationSteps: [{0.5: 0.5}, {1: 1}, {1.5: 2}, {2: 3}, {2.5: 4}, {3: 6}, {3.5: 8}, {4: 12}, {4.5: 24}],
-        frequencySteps: [{1: 1}, {2: 2}, {3: 5}, {4: 10}, {5: 50}, {6: 100}, {7: 200}, {8: 200}, {9: 1000}],
+        frequencySteps: [{1: 1}, {2: 2}, {3: 5}, {4: 10}, {5: 50}, {6: 100}, {7: 200}, {8: 500}, {9: 1000}],
         durationStep: 0.5,
         frequencyStep: 1,
         durationMin: 0.5,
@@ -97,9 +97,9 @@
               let key = Object.keys(obj);
               if(Number(key) === value){
                 self.durationValue = durationArray[i][key];
+                self.$store.commit("getDurationValue", self.durationValue);
               }
             })
-            this.$store.commit("getDurationValue", value);
             return this.$store.commit("getPrecipDuration", value);
           },
       },
@@ -114,9 +114,9 @@
               let key = Object.keys(obj);
               if(Number(key) === value){
                 self.frequencyValue = frequencyArray[i][key];
+                self.$store.commit("getFrequencyValue", self.frequencyValue);
               }
             })
-            this.$store.commit("getFrequencyValue", value);
             return this.$store.commit("getPrecipFrequency", value);
           },
       },
