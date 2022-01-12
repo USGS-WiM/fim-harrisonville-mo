@@ -1,90 +1,101 @@
 <template>
   <v-main>
     <div style="height: 100%; width: 100%">
-      <l-map
-        v-if="showMap"
-        :zoom="zoom"
-        :center="center"
-        :options="mapOptions"
-        style="height: 80%"
-        @update:center="centerUpdate"
-        @update:zoom="zoomUpdate"
-      >
-        <l-tile-layer :url="url" :attribution="attribution" />
-        <l-marker :lat-lng="withPopup">
-          <l-popup>
-            <div @click="innerClick">
-              I am a popup
-              <p v-show="showParagraph">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque
-                sed pretium nisl, ut sagittis sapien. Sed vel sollicitudin nisi.
-                Donec finibus semper metus id malesuada.
-              </p>
-            </div>
-          </l-popup>
-        </l-marker>
-        <l-marker :lat-lng="withTooltip">
-          <l-tooltip :options="{ permanent: true, interactive: true }">
-            <div @click="innerClick">
-              I am a tooltip
-              <p v-show="showParagraph">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque
-                sed pretium nisl, ut sagittis sapien. Sed vel sollicitudin nisi.
-                Donec finibus semper metus id malesuada.
-              </p>
-            </div>
-          </l-tooltip>
-        </l-marker>
-      </l-map>
+      <!-- a leaflet map -->
+      <div id="map"></div>
     </div>
   </v-main>
 </template>
 
 <script>
-import { latLng } from "leaflet";
-import { LMap, LTileLayer, LMarker, LPopup, LTooltip } from "vue2-leaflet";
+import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
-export default {
-  name: "Example",
-  components: {
-    LMap,
-    LTileLayer,
-    LMarker,
-    LPopup,
-    LTooltip,
+//define basemaps
+var tileProviders = [
+  {
+    name: "Streets",
+    attribution: "Esri",
+    url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}",
   },
+  {
+    name: "Satellite",
+    attribution:
+      "Esri, DigitalGlobe, GeoEye, i-cubed, USDA, USGS, AEX, Getmapping, Aerogrid, IGN, IGP, swisstopo, and the GIS User Community",
+    url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+  },
+  {
+    name: "Topo",
+    attribution: "Esri",
+    url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}",
+  },
+  {
+    name: "Terrain",
+    attribution: "Esri, NAVTEQ, DeLorme",
+    url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Shaded_Relief/MapServer/tile/{z}/{y}/{x}",
+  },
+  {
+    name: "Gray",
+    url: "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}",
+    attribution: "Esri, NAVTEQ, DeLorme",
+  },
+  {
+    name: "NatGeo",
+    attribution: "Esri",
+    url: "https://server.arcgisonline.com/ArcGIS/rest/services/NatGeo_World_Map/MapServer/tile/{z}/{y}/{x}",
+  },
+];
+
+export default {
+  name: "Map",
   data() {
     return {
-      zoom: 13,
-      center: latLng(47.41322, -1.219482),
+      map: null,
+      zoom: 4,
+      tileProviders: tileProviders,
+      center: L.latLng(37.0902, -85.7129),
       url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
       attribution:
         '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
-      withPopup: latLng(47.41322, -1.219482),
-      withTooltip: latLng(47.41422, -1.250482),
-      currentZoom: 11.5,
-      currentCenter: latLng(47.41322, -1.219482),
-      showParagraph: false,
-      mapOptions: {
-        zoomSnap: 0.5,
-      },
-      showMap: true,
     };
   },
   methods: {
-    zoomUpdate(zoom) {
-      this.currentZoom = zoom;
-    },
-    centerUpdate(center) {
-      this.currentCenter = center;
-    },
-    showLongText() {
-      this.showParagraph = !this.showParagraph;
-    },
-    innerClick() {
-      alert("Click!");
+    createMap() {
+      //Set 'this' to self to access it inside map events within method
+      let self = this;
+
+      self.map = L.map("map", {
+        center: self.center,
+        zoom: self.zoom,
+        zoomSnap: 0.5,
+      });
+
+      //Add streets tilelayer to map initially
+      L.tileLayer(tileProviders[0].url, {
+        attribution: tileProviders[0].attribution,
+        name: tileProviders[0].name,
+      }).addTo(self.map);
     },
   },
+  mounted() {
+    this.createMap();
+  },
+  watch: {
+    "$store.state.durationValue": function () {
+      console.log("Duration: " + this.$store.state.durationValue);
+    },
+    "$store.state.frequencyValue": function () {
+      console.log("Frequency: " + this.$store.state.frequencyValue);
+    },
+  }
 };
 </script>
+<style>
+  #map {
+    height: 100%;
+    width: 100%;
+    font-family: "Public Sans", sans-serif;
+    /* Set z-index so sidebar appears above map on mobile */
+    z-index: 1;
+  }
+</style>
