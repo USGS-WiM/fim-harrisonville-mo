@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "core-js": "~3.12.1",
+    "esri-leaflet": "^3.0.3",
     "leaflet": "^1.7.1",
     "uswds": "~2.11.2",
     "vue": "~2.6.12",
