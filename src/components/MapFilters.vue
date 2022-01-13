@@ -40,7 +40,7 @@
           </v-card>
           <v-card>
           <v-card-text>
-            <v-subheader>Precipitation Frequency (years):  &nbsp; {{ frequencyValue }}</v-subheader>
+            <v-subheader>Precipitation Frequency (years):  &nbsp; {{ frequencyDisplayed }}</v-subheader>
             <v-slider
               class="sliders"
               v-model="precipFrequency"
@@ -56,6 +56,7 @@
           </v-card-text>
         </v-card>
         </v-container>
+        <v-subheader v-if="nullValue">No flood stage available at this duration and frequency.</v-subheader>
       </v-expansion-panel-content>
     </v-expansion-panel>
   </v-expansion-panels>
@@ -67,10 +68,10 @@
       return {
         checkbox: true,
         panel: [1],
-        durationValues: [0.5, 1, 2, 3, 4, 6, 8, 12, 24],
-        frequencyValues: [1, 2, 5, 10, 50, 100, 200, 500, 1000],
+        // durationValues: [0.5, 1, 2, 3, 4, 6, 8, 12, 24],
+        frequencyDisplayValues: [1, 2, 5, 10, 25, 50, 100, 200, 500, 1000],
         durationSteps: [{0.5: 0.5}, {1: 1}, {1.5: 2}, {2: 3}, {2.5: 4}, {3: 6}, {3.5: 8}, {4: 12}, {4.5: 24}],
-        frequencySteps: [{1: 1}, {2: 2}, {3: 5}, {4: 10}, {5: 50}, {6: 100}, {7: 200}, {8: 500}, {9: 1000}],
+        frequencySteps: [{1: "F1YEAR"}, {2: "F2YEAR"}, {3: "F5YEAR"}, {4: "F10YEAR"}, {5: "F25YEAR"}, {6: "F50YEAR"}, {7: "F100YEAR"}, {8: "F200YEAR"}, {9: "F500YEAR"}, {10: "F1000YEAR"}],
         durationStep: 0.5,
         frequencyStep: 1,
         durationMin: 0.5,
@@ -78,12 +79,19 @@
         durationMax: 4.5,
         frequencyMax: 9,
         durationTicks: [0.5, 1, 2, 3, 4, 6, 8, 12, 24],
-        frequencyTicks: [1, 2, 5, 10, 50, 100, 200, 500, 1000],
+        frequencyTicks: [1, 2, 5, 10, 25, 50, 100, 200, 500, 1000],
         durationValue: 0.5,
-        frequencyValue: 1,
+        frequencyValue: "F1YEAR",
+        frequencyDisplayed: 1,
+        nullValue: true,
       }
     },
     methods: {
+    },
+    watch: {
+      "$store.state.nullValue": function () {
+        this.nullValue = this.$store.state.nullValue;
+      },
     },
     computed: {
       precipDuration: {
@@ -115,6 +123,7 @@
               if(Number(key) === value){
                 self.frequencyValue = frequencyArray[i][key];
                 self.$store.commit("getFrequencyValue", self.frequencyValue);
+                self.frequencyDisplayed = self.frequencyDisplayValues[i];
               }
             })
             return this.$store.commit("getPrecipFrequency", value);

@@ -8,8 +8,9 @@ export default new Vuex.Store({
     drawerState: true,
     precipDuration: 0.5,
     precipFrequency: 1,
-    frequencyValue: 1,
+    frequencyValue: "F1YEAR",
     durationValue: 0.5,
+    nullValue: true,
   },
   mutations: {
     toggleDrawerState (state, data) {
@@ -27,6 +28,9 @@ export default new Vuex.Store({
     getDurationValue(state, durationValue) {
       state.durationValue = durationValue;
     },
+    getNullValue(state, nullValue) {
+      state.nullValue = nullValue;
+    },
   },
   getters : {
     drawerState: (state) => state.drawerState,
@@ -34,6 +38,7 @@ export default new Vuex.Store({
     precipFrequency: (state) => state.precipFrequency,
     frequencyValue: (state) => state.frequencyValue,
     durationValue: (state) => state.durationValue,
+    nullValue: (state) => state.nullValue,
 
   },
   actions: {

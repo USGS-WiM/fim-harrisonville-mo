@@ -10,6 +10,7 @@
 <script>
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import * as esri from "esri-leaflet";
 
 //define basemaps
 var tileProviders = [
@@ -51,20 +52,19 @@ export default {
   data() {
     return {
       map: null,
-      zoom: 4,
+      zoom: 15,
       tileProviders: tileProviders,
-      center: L.latLng(37.0902, -85.7129),
+      center: L.latLng(38.645, -94.345),
       url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
       attribution:
         '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+      floodLayer: null,
     };
   },
   methods: {
     createMap() {
-      //Set 'this' to self to access it inside map events within method
       let self = this;
-
-      self.map = L.map("map", {
+      this.map = L.map("map", {
         center: self.center,
         zoom: self.zoom,
         zoomSnap: 0.5,
@@ -75,19 +75,57 @@ export default {
         attribution: tileProviders[0].attribution,
         name: tileProviders[0].name,
       }).addTo(self.map);
+
+      this.loadPolygon();
     },
+    loadPolygon() {
+      let polygonURL = `https://fim.wim.usgs.gov/server/rest/services/FIM_MO/Floods/MapServer/0`;
+
+      this.floodLayer = esri.featureLayer({
+        url: polygonURL,
+      })
+    },
+    queryTable(duration, frequency) {
+      let self = this;
+      let tableURL = `https://fim.wim.usgs.gov/server/rest/services/FIM_MO/Floods/MapServer/1/query?where=Duration=${duration}&outFields=${frequency}&f=pjson`;
+
+      let httpRequest = new XMLHttpRequest();
+
+      httpRequest.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            let response = JSON.parse(this.responseText);
+            self.getPolygon(Object.values(response.features[0].attributes)[0])
+        }
+      };
+
+      httpRequest.open("GET", tableURL, true);
+      httpRequest.send();
+
+    },
+    getPolygon(value) {
+      if(value !== null){
+        this.$store.state.nullValue = false;
+        this.floodLayer.setWhere(`STAGE=${value}`)
+        this.floodLayer.addTo(this.map);
+      }else{
+        this.$store.state.nullValue = true;
+        if(this.map.hasLayer(this.floodLayer)){
+          this.floodLayer.remove();
+        }
+      }
+    }
   },
   mounted() {
     this.createMap();
   },
   watch: {
     "$store.state.durationValue": function () {
-      console.log("Duration: " + this.$store.state.durationValue);
+      this.queryTable(this.$store.state.durationValue, this.$store.state.frequencyValue);
     },
     "$store.state.frequencyValue": function () {
-      console.log("Frequency: " + this.$store.state.frequencyValue);
+      this.queryTable(this.$store.state.durationValue, this.$store.state.frequencyValue);
     },
-  }
+  },
 };
 </script>
 <style>
