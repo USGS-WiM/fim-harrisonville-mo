@@ -11,6 +11,7 @@ export default new Vuex.Store({
     frequencyValue: "F1YEAR",
     durationValue: 0.5,
     nullValue: true,
+    basemapState: "Streets",
   },
   mutations: {
     toggleDrawerState (state, data) {
@@ -31,6 +32,9 @@ export default new Vuex.Store({
     getNullValue(state, nullValue) {
       state.nullValue = nullValue;
     },
+    getBasemapState(state, selected) {
+      state.basemapState = selected;
+    },
   },
   getters : {
     drawerState: (state) => state.drawerState,
@@ -39,7 +43,7 @@ export default new Vuex.Store({
     frequencyValue: (state) => state.frequencyValue,
     durationValue: (state) => state.durationValue,
     nullValue: (state) => state.nullValue,
-
+    basemapState: (state) => state.basemapState,
   },
   actions: {
   },

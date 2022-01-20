@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Added sliders to sidebar for precipitation duration and frequency
 - Added polygon layer to map
 - Polygon layer queried with slider
+- Added basemaps
 
 ### Changed
 
