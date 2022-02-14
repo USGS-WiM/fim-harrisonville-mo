@@ -2,7 +2,7 @@
   <v-expansion-panels v-model="panel" multiple>
     <!-- Basemap Section -->
     <v-expansion-panel>
-      <v-expansion-panel-header>
+      <v-expansion-panel-header :expand-icon="basemapIcon" disable-icon-rotate @click="changeBasemapIcon()">
         Basemaps
       </v-expansion-panel-header>
       <v-expansion-panel-content>
@@ -16,7 +16,7 @@
     </v-expansion-panel>
     <!-- Filters Section -->
     <v-expansion-panel>
-      <v-expansion-panel-header>
+      <v-expansion-panel-header :expand-icon="floodIcon" disable-icon-rotate @click="changeFloodIcon()">
         Flood Scenarios
       </v-expansion-panel-header>
       <v-expansion-panel-content>
@@ -84,9 +84,17 @@
         frequencyValue: "F1YEAR",
         frequencyDisplayed: 1,
         nullValue: true,
+        basemapIcon: "mdi-plus",
+        floodIcon: "mdi-minus",
       }
     },
     methods: {
+      changeBasemapIcon() {
+        this.basemapIcon = this.basemapIcon === "mdi-plus" ? "mdi-minus" : "mdi-plus";
+      },
+      changeFloodIcon() {
+        this.floodIcon = this.floodIcon === "mdi-plus" ? "mdi-minus" : "mdi-plus";
+      }
     },
     watch: {
       "$store.state.nullValue": function () {
@@ -133,6 +141,10 @@
   }
 </script>
 <style>
+.v-expansion-panel-header {
+  font-weight: 700;
+}
+
 .sliders {
   font-size: 10px !important;
 }
