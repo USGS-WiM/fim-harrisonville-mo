@@ -2,18 +2,66 @@
   <v-expansion-panels v-model="panel" multiple>
     <!-- Basemap Section -->
     <v-expansion-panel>
-      <v-expansion-panel-header :expand-icon="basemapIcon" disable-icon-rotate @click="changeBasemapIcon()">
-        Basemaps
-      </v-expansion-panel-header>
-      <v-expansion-panel-content>
-        <v-container class="px-0" fluid>
-          <v-checkbox
-            v-model="checkbox"
-            :label="`Checkbox 1`"
-          ></v-checkbox>
-        </v-container>
-      </v-expansion-panel-content>
-    </v-expansion-panel>
+      <v-expansion-panel-header> Basemaps </v-expansion-panel-header>
+        <v-expansion-panel-content>
+          <v-container class="px-0" fluid>
+            <v-btn-toggle borderless mandatory>
+              <v-btn
+                text
+                id="streets"
+                class="basemapBtn"
+                value="Streets"
+                @click="basemapSelected = 'Streets'"
+              >
+                <img
+                  class="basemapThumb"
+                  alt=""
+                  src="../assets/streets.jpg"
+                /><label for="streets">Streets</label>
+              </v-btn>
+              <v-btn
+                text
+                id="satellite"
+                class="basemapBtn"
+                value="Satellite"
+                @click="basemapSelected = 'Satellite'"
+              >
+                <img
+                  class="basemapThumb"
+                  alt=""
+                  src="../assets/satellite.jpg"
+                /><label for="satellite">Satellite</label>
+              </v-btn>
+              <v-btn
+                text
+                id="topo"
+                class="basemapBtn"
+                value="Topo"
+                @click="basemapSelected = 'Topo'"
+              >
+                <img
+                  class="basemapThumb"
+                  alt=""
+                  src="../assets/topo.jpg"
+                /><label for="topo">Topo</label>
+              </v-btn>
+              <v-btn
+                text
+                id="natgeo"
+                class="basemapBtn"
+                value="NatGeo"
+                @click="basemapSelected = 'NatGeo'"
+              >
+                <img
+                  class="basemapThumb"
+                  alt=""
+                  src="../assets/natgeo.jpg"
+                /><label for="natgeo">NatGeo</label>
+              </v-btn>
+            </v-btn-toggle>
+          </v-container>
+        </v-expansion-panel-content>
+      </v-expansion-panel>
     <!-- Filters Section -->
     <v-expansion-panel>
       <v-expansion-panel-header :expand-icon="floodIcon" disable-icon-rotate @click="changeFloodIcon()">
@@ -137,6 +185,15 @@
             return this.$store.commit("getPrecipFrequency", value);
           },
       },
+      // use v-model to set basemap state
+      basemapSelected: {
+        get() {
+          return this.$store.state.basemapState;
+        },
+        set(value) {
+          return this.$store.commit("getBasemapState", value);
+        },
+      },
     }
   }
 </script>
@@ -152,4 +209,23 @@
 .v-slider--horizontal .v-slider__track-container {
   height: 5px !important;
 }
+
+.basemapThumb {
+  border: 0.5px solid #ffffff;
+  border-radius: 2px;
+  margin-right: 15px;
+  height: 25px;
+}
+
+.basemapBtn {
+  width: 100%;
+  justify-content: left !important;
+  font-weight: 400 !important;
+}
+
+.v-btn-toggle {
+  flex-direction: column;
+  width: 100%;
+}
+
 </style>

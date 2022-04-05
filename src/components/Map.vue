@@ -31,16 +31,6 @@ var tileProviders = [
     url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}",
   },
   {
-    name: "Terrain",
-    attribution: "Esri, NAVTEQ, DeLorme",
-    url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Shaded_Relief/MapServer/tile/{z}/{y}/{x}",
-  },
-  {
-    name: "Gray",
-    url: "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}",
-    attribution: "Esri, NAVTEQ, DeLorme",
-  },
-  {
     name: "NatGeo",
     attribution: "Esri",
     url: "https://server.arcgisonline.com/ArcGIS/rest/services/NatGeo_World_Map/MapServer/tile/{z}/{y}/{x}",
@@ -53,28 +43,26 @@ export default {
     return {
       map: null,
       zoom: 15,
-      tileProviders: tileProviders,
+      tileProviders: {
+        "Streets": L.tileLayer(tileProviders[0].url, {attribution: tileProviders[0].attribution, name: tileProviders[0].name}),
+        "Satellite": L.tileLayer(tileProviders[1].url, {attribution: tileProviders[1].attribution, name: tileProviders[1].name}),
+        "Topo": L.tileLayer(tileProviders[2].url, {attribution: tileProviders[2].attribution, name: tileProviders[2].name}),
+        "NatGeo": L.tileLayer(tileProviders[3].url, {attribution: tileProviders[3].attribution, name: tileProviders[3].name}),
+      },
       center: L.latLng(38.645, -94.345),
-      url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-      attribution:
-        '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
       floodLayer: null,
     };
   },
   methods: {
     createMap() {
       let self = this;
+
       this.map = L.map("map", {
         center: self.center,
         zoom: self.zoom,
         zoomSnap: 0.5,
+        layers: [self.tileProviders["Streets"]]
       });
-
-      //Add streets tilelayer to map initially
-      L.tileLayer(tileProviders[0].url, {
-        attribution: tileProviders[0].attribution,
-        name: tileProviders[0].name,
-      }).addTo(self.map);
 
       this.loadPolygon();
     },
@@ -113,7 +101,25 @@ export default {
           this.floodLayer.remove();
         }
       }
-    }
+    },
+    // Compare tile provider name to basemap state and add to map
+    selectBasemap() {
+      let self = this;
+      //Clear all basemaps before adding
+      self.map.eachLayer(function (layer) {
+        if (layer instanceof L.TileLayer) {
+          layer.remove();
+        }
+      });
+      for (let i = 0; i < tileProviders.length; i++) {
+        if (self.$store.state.basemapState == tileProviders[i].name) {
+          let attribution = tileProviders[i].attribution;
+          L.tileLayer(tileProviders[i].url, {
+            attribution: attribution,
+          }).addTo(self.map);
+        }
+      }
+    },
   },
   mounted() {
     this.createMap();
@@ -124,6 +130,10 @@ export default {
     },
     "$store.state.frequencyValue": function () {
       this.queryTable(this.$store.state.durationValue, this.$store.state.frequencyValue);
+    },
+    // Watch basemap state and update visibility when state changes
+    "$store.state.basemapState": function () {
+      this.selectBasemap();
     },
   },
 };
