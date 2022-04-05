@@ -16,7 +16,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 
+- Updated README with contributors and project info
 - Changed favicon to WIM favicon
+
 
 ### Fixed
 

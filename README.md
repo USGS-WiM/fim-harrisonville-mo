@@ -1,9 +1,9 @@
 ![WiM](wim.png)
 
 
-# vue-leaflet-template
+# FIM Harrisonville, MO
 
-A simple project template utilizing Vue, Leaflet, and USWDS
+A FIM application specific to the City of Harrisonville, MO, displaying modeled flood stage scenarios for various precipitation and rainfall duration inputs.
 
 ### Prerequisites
 
@@ -59,8 +59,8 @@ To push tags to remote origin: `git push origin --tags`
 
 ## Authors
 
-* **[Jordan Doe](PROFILE_PAGE_URL_HERE)**  - *Lead Developer* - [USGS Web Informatics & Mapping](https://wim.usgs.gov/)
-* **[Jessie Smith](PROFILE_PAGE_URL_HERE)** - *Developer* -  [USGS Web Informatics & Mapping](https://wim.usgs.gov/)
+* **[Nick Estes](https://github.com/njestes)**  - *Lead Developer* - [USGS Web Informatics & Mapping](https://wim.usgs.gov/)
+* **[Abigail Gleason](https://github.com/abigail770)** - *Developer* -  [USGS Web Informatics & Mapping](https://wim.usgs.gov/)
 
 See also the list of [contributors](../../graphs/contributors) who participated in this project.
 
