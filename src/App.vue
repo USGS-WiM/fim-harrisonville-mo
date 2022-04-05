@@ -2,14 +2,11 @@
   <v-app>
     <v-app-bar dark clipped-left app class="toolbar">
       <v-app-bar-nav-icon @click="drawerState = !drawerState"></v-app-bar-nav-icon>
-      <a href="https://www.usgs.gov/" target="_blank">
-            <div class="toolbar-image">
-              <img alt="USGS logo" height="60px" src="../public/usgs.png" />
-            </div>
-        </a>
       <v-toolbar-title class="title">
-        FIM - Harrisonville, MO
+        Muddy Creek at Harrisonville Precipitation-Driven Flood Inundation Mapper
       </v-toolbar-title>
+      <v-spacer></v-spacer>
+      <UserGuide></UserGuide>
       <About></About>
     </v-app-bar>
 
@@ -23,11 +20,13 @@
 import Map from "./components/Map";
 import Sidebar from "./components/Sidebar";
 import About from "./components/About";
+import UserGuide from "./components/UserGuide";
 export default {
   components: {
     Sidebar,
     Map,
     About,
+    UserGuide
   },
   computed: {
     drawerState: {

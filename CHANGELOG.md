@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Added polygon layer to map
 - Polygon layer queried with slider
 - Application header
-- Dialog for About info
+- Dialogs for About/Disclaimer and User Guide
 
 ### Changed
 

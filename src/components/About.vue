@@ -2,7 +2,7 @@
   <div class="text-center">
     <v-dialog
       v-model="dialog"
-      width="500"
+      width="600"
     >
       <template v-slot:activator="{ on, attrs }">
         <v-btn
@@ -13,18 +13,37 @@
           v-bind="attrs"
           v-on="on"
         >
-          <v-icon small class="about-icon">mdi-help-circle-outline</v-icon> About
+          <v-icon small class="header-icons">mdi-help-circle-outline</v-icon> About
         </v-btn>
       </template>
 
       <v-card>
-        <v-card-title class="text-h5 grey lighten-2">
-          <v-icon class="about-icon">mdi-help-circle-outline</v-icon> About
-        </v-card-title>
+          <v-tabs
+            background-color="grey lighten-2"
+            centered
+          >
+            <v-tab>
+              <v-icon class="header-icons">mdi-help-circle-outline</v-icon>About the application
+            </v-tab>
+            <v-tab>
+              <v-icon class="header-icons">mdi-exclamation</v-icon>Welcome and Disclaimer
+            </v-tab>
 
-        <v-card-text>
-          About text will go here.
-        </v-card-text>
+            <v-tab-item>
+              <v-card flat>
+                <v-card-text>
+                  <p>About information to be provided</p>
+                </v-card-text>
+              </v-card>
+            </v-tab-item>
+            <v-tab-item>
+              <v-card flat>
+                <v-card-text>
+                  <p>Disclaimer to be provided</p>
+                </v-card-text>
+              </v-card>
+            </v-tab-item>
+          </v-tabs>
 
         <v-divider></v-divider>
 
@@ -48,6 +67,8 @@
     data () {
       return {
         dialog: false,
+        // tab: null,
+        // text: "To be provided",
       }
     },
   }
@@ -65,7 +86,11 @@
     text-transform: capitalize;
 }
 
-.about-icon {
+.header-icons {
     margin-right: 5px;
+}
+
+.v-tab {
+font-size: 0.75em
 }
 </style>
