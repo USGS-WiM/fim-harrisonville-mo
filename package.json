@@ -1,10 +1,11 @@
 {
-  "name": "vue-leaflet",
+  "name": "fim-harrisonville-mo",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
+    "build-test": "npm install && npm run build",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
