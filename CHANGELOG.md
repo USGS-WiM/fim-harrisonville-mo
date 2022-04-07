@@ -14,7 +14,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Polygon layer queried with slider
 - Added basemaps
 - Application header
-- Dialogs for About/Disclaimer and User Guide
+- About/Disclaimer dialog and text
+- User Guide (no text provided yet)
 
 ### Changed
 

@@ -2,6 +2,7 @@
   <div class="text-center">
     <v-dialog
       v-model="dialog"
+      scrollable
       width="600"
     >
       <template v-slot:activator="{ on, attrs }">
@@ -18,11 +19,12 @@
       </template>
 
       <v-card>
-        <v-card-title class="text-h6 grey lighten-2 user-guide-title">
+        <v-card-title class="text-h8 grey lighten-2 user-guide-title">
           <v-icon class="header-icons">mdi-book-open-variant</v-icon>User Guide
+          <v-icon @click="dialog = false" class="close-icon">mdi-close</v-icon>
         </v-card-title>
 
-        <v-card-text>
+        <v-card-text  style="height: 600px; padding: 0px;">
           Text to be provided.
         </v-card-text>
 
@@ -65,11 +67,17 @@
     text-transform: capitalize;
 }
 
+.close-icon {
+    margin-right: 0px;
+    margin-left: auto;
+}
+
 .header-icons {
     margin-right: 5px;
 }
 
 .user-guide-title {
   color: rgba(0, 0, 0, 0.54);
+  font-size: 1em !important;
 }
 </style>

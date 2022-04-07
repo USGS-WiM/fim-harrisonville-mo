@@ -2,7 +2,7 @@
   <v-expansion-panels v-model="panel" multiple>
     <!-- Basemap Section -->
     <v-expansion-panel>
-      <v-expansion-panel-header> Basemaps </v-expansion-panel-header>
+      <v-expansion-panel-header  :expand-icon="basemapIcon" disable-icon-rotate @click="changeBasemapIcon()"> Basemaps </v-expansion-panel-header>
         <v-expansion-panel-content>
           <v-container class="px-0" fluid>
             <v-btn-toggle borderless mandatory>
