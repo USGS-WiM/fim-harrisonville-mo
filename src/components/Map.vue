@@ -3,6 +3,40 @@
     <div style="height: 100%; width: 100%">
       <!-- a leaflet map -->
       <div id="map"></div>
+      <!-- Legend -->
+      <v-expansion-panels id="legendContainer">
+        <v-expansion-panel>
+          <!-- Legend title -->
+          <v-expansion-panel-header id="titleContainer">
+            <div id="legendExplanation">
+              <v-icon 
+                small
+                color="#333"
+                >mdi-shape
+              </v-icon>
+              <label>Explanation</label>
+            </div>
+          </v-expansion-panel-header>
+          <v-expansion-panel-content id="legendContent">
+          <!-- Layers (not toggleable) -->
+            <div id="layers">
+              <div class="legendIcon" v-if="fimAreaVisible">
+                <div
+                  style="padding-right: 10px;"
+                  id="fimAreaIcon"
+                  class="
+                    wmm-square wmm-blue wmm-icon-square wmm-icon-blue wmm-size-25 wmm-borderless
+                  "
+                ></div>
+                <label v-if="fimAreaVisible">Flood-inundation Area</label>
+              </div>
+            </div>
+            <!-- Toggleable layers -->
+            <!-- <div id="toggleableLayers">
+            </div> -->
+          </v-expansion-panel-content>
+        </v-expansion-panel>
+      </v-expansion-panels>
     </div>
   </v-main>
 </template>
@@ -51,6 +85,7 @@ export default {
       },
       center: L.latLng(38.645, -94.345),
       floodLayer: null,
+      fimAreaVisible: false,
     };
   },
   methods: {
@@ -95,11 +130,13 @@ export default {
         this.$store.state.nullValue = false;
         this.floodLayer.setWhere(`STAGE=${value}`)
         this.floodLayer.addTo(this.map);
+        this.fimAreaVisible = true;
       }else{
         this.$store.state.nullValue = true;
         if(this.map.hasLayer(this.floodLayer)){
           this.floodLayer.remove();
         }
+        this.fimAreaVisible = false;
       }
     },
     // Compare tile provider name to basemap state and add to map
@@ -139,11 +176,70 @@ export default {
 };
 </script>
 <style>
+  @import "../styles/markers.css";
   #map {
     height: 100%;
     width: 100%;
     font-family: "Public Sans", sans-serif;
     /* Set z-index so sidebar appears above map on mobile */
     z-index: 1;
+  }
+
+  #legendContainer {
+    border-radius: 5px 5px 5px 5px;
+    box-shadow: 0 3px 6px rgba(30, 39, 50, 0.2), 0 3px 6px rgba(30, 39, 50, 0.2);
+    right: 10px;
+    top: 45px;
+    height: auto;
+    width: 225px;
+    position: absolute;
+    z-index: 999;
+    font-size: 14px;
+    opacity: 0.75;
+  }
+
+  #legendExplanation {
+    box-sizing: border-box;
+    width: 100%;
+    text-align: center;
+    font-weight: bold;
+    font-size: 14px;
+  }
+
+  #legendExplanation label {
+    padding-left: 5px;
+    font-family: "Public Sans", sans-serif;
+  }
+
+  #legendContent {
+    max-height: 65vh;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+
+  .legendIcon {
+    display: inline-block;
+    position: relative;
+    margin: 8px;
+    line-height: 24px;
+    height: 24px;
+  }
+
+  .legendIcon div {
+    vertical-align: middle;
+    label {
+      display: inline-block;
+      -webkit-justify-content: center;
+      justify-content: center;
+      padding-left: 5px;
+    }
+  }
+
+  .legendIcon label {
+    display: inline-block;
+    -webkit-justify-content: center;
+    justify-content: center;
+    padding-left: 20px;
+    font-family: "Public Sans", sans-serif;
   }
 </style>

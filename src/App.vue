@@ -27,3 +27,16 @@ export default {
   },
 };
 </script>
+
+<style>
+  html,
+  body {
+    font-family: "Public Sans", sans-serif;
+    color: #333;
+  }
+
+  #app {
+    font-family: "Public Sans", sans-serif !important;
+    color: #333;
+}
+</style>
