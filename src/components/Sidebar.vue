@@ -1,5 +1,5 @@
 <template>
-  <v-navigation-drawer v-model="drawerState" app :width="375">
+  <v-navigation-drawer v-model="drawerState" app :width="400">
     <div>
       <h2 id="sidebarTitle">Map Filters</h2>
       <MapFilters></MapFilters>

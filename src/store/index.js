@@ -12,6 +12,7 @@ export default new Vuex.Store({
     durationValue: 0.5,
     nullValue: true,
     basemapState: "Streets",
+    moistureState: "Normal",
   },
   mutations: {
     toggleDrawerState (state, data) {
@@ -35,6 +36,9 @@ export default new Vuex.Store({
     getBasemapState(state, selected) {
       state.basemapState = selected;
     },
+    getMoistureState(state, moistureState) {
+      state.moistureState = moistureState;
+    },
   },
   getters : {
     drawerState: (state) => state.drawerState,
@@ -44,6 +48,7 @@ export default new Vuex.Store({
     durationValue: (state) => state.durationValue,
     nullValue: (state) => state.nullValue,
     basemapState: (state) => state.basemapState,
+    moistureState: (state) => state.moistureState,
   },
   actions: {
   },

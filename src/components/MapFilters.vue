@@ -5,7 +5,7 @@
       <v-expansion-panel-header> Basemaps </v-expansion-panel-header>
         <v-expansion-panel-content>
           <v-container class="px-0" fluid>
-            <v-btn-toggle borderless mandatory>
+            <v-btn-toggle borderless mandatory v-model="basemapSelected" class="basemapGroup">
               <v-btn
                 text
                 id="streets"
@@ -69,9 +69,43 @@
       </v-expansion-panel-header>
       <v-expansion-panel-content>
         <v-container class="px-0" fluid>
-          <v-card>
+          <v-card class="sub-card" flat>
             <v-card-text>
-              <v-subheader>Precipitation Duration (hours):  &nbsp; {{durationValue}}</v-subheader>
+              <div class="moistureButtonDiv">
+                <v-subheader>Select an antecedant moisture condition:</v-subheader>
+                <v-btn-toggle borderless mandatory v-model="moistureSelected" class="moistureGroup">
+                  <v-btn
+                    text
+                    id="dry"
+                    class="moistureBtn"
+                    value="Dry"
+                    @click="moistureSelected = 'Dry'"
+                  >Dry
+                  </v-btn>
+                  <v-btn
+                    text
+                    id="normal"
+                    class="moistureBtn"
+                    value="Normal"
+                    @click="moistureSelected = 'Normal'"
+                  >Normal
+                  </v-btn>
+                  <v-btn
+                    text
+                    id="wet"
+                    class="moistureBtn"
+                    value="Wet"
+                    @click="moistureSelected = 'Wet'"
+                  >Wet
+                  </v-btn>
+                </v-btn-toggle>
+              </div>
+            </v-card-text>
+          </v-card>
+          <v-divider></v-divider>
+          <v-card class="sub-card" flat>
+            <v-card-text>
+              <v-subheader>Select a precipitation duration (hours):  &nbsp; {{durationValue}}</v-subheader>
               <v-slider
                 class="sliders"
                 v-model="precipDuration"
@@ -86,25 +120,33 @@
               </v-slider>
             </v-card-text>
           </v-card>
-          <v-card>
-          <v-card-text>
-            <v-subheader>Precipitation Frequency (years):  &nbsp; {{ frequencyDisplayed }}</v-subheader>
-            <v-slider
-              class="sliders"
-              v-model="precipFrequency"
-              :step="frequencyStep"
-              type="number"
-              ticks
-              :tick-labels="frequencyTicks"
-              tick-size="4"
-              :max="9"
-              :min="1"
-            >
-            </v-slider>
-          </v-card-text>
-        </v-card>
+          <v-divider></v-divider>
+          <v-card class="sub-card" flat>
+            <v-card-text>
+              <v-subheader>Select a precipitation frequency (years):  &nbsp; {{ frequencyDisplayed }}</v-subheader>
+              <v-slider
+                class="sliders"
+                v-model="precipFrequency"
+                :step="frequencyStep"
+                type="number"
+                ticks
+                :tick-labels="frequencyTicks"
+                tick-size="4"
+                :max="9"
+                :min="1"
+              >
+              </v-slider>
+            </v-card-text>
+          </v-card>
         </v-container>
-        <v-subheader v-if="nullValue">No flood stage available at this duration and frequency.</v-subheader>
+        <v-alert
+          type="warning"
+          dense
+          text
+          v-if="nullValue"
+        >
+          No flood stage available at this duration and frequency.
+        </v-alert>
       </v-expansion-panel-content>
     </v-expansion-panel>
   </v-expansion-panels>
@@ -133,8 +175,6 @@
         frequencyDisplayed: 1,
         nullValue: true,
       }
-    },
-    methods: {
     },
     watch: {
       "$store.state.nullValue": function () {
@@ -186,6 +226,15 @@
           return this.$store.commit("getBasemapState", value);
         },
       },
+      // use v-model to set moisture state
+      moistureSelected: {
+        get() {
+          return this.$store.state.moistureState;
+        },
+        set(value) {
+          return this.$store.commit("getMoistureState", value);
+        },
+      },
     }
   }
 </script>
@@ -215,9 +264,22 @@
   font-weight: 400 !important;
 }
 
-.v-btn-toggle {
+.basemapGroup {
   flex-direction: column;
   width: 100%;
 }
 
+.moistureBtn {
+  width: 33%;
+}
+
+.moistureGroup {
+  flex-direction: row;
+  width: 100%;
+  justify-content: space-evenly;
+}
+
+.moistureButtonDiv {
+  width: 100%;
+}
 </style>
