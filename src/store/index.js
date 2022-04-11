@@ -6,11 +6,11 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     drawerState: true,
-    precipDuration: 0.5,
-    precipFrequency: 1,
-    frequencyValue: "F1YEAR",
-    durationValue: 0.5,
-    nullValue: true,
+    precipDuration: 4.5,
+    precipMagnitude: 10,
+    magnitudeValue: null,
+    durationValue: 24,
+    nullValue: false,
     basemapState: "Streets",
     moistureState: "Normal",
   },
@@ -21,11 +21,11 @@ export default new Vuex.Store({
     getPrecipDuration(state, precipDuration) {
       state.precipDuration = precipDuration;
     },
-    getPrecipFrequency(state, precipFrequency) {
-      state.precipFrequency = precipFrequency;
+    getPrecipMagnitude(state, precipMagnitude) {
+      state.precipMagnitude = precipMagnitude;
     },
-    getFrequencyValue(state, frequencyValue) {
-      state.frequencyValue = frequencyValue;
+    getMagnitudeValue(state, magnitudeValue) {
+      state.magnitudeValue = magnitudeValue;
     },
     getDurationValue(state, durationValue) {
       state.durationValue = durationValue;
@@ -43,8 +43,8 @@ export default new Vuex.Store({
   getters : {
     drawerState: (state) => state.drawerState,
     precipDuration: (state) => state.precipDuration,
-    precipFrequency: (state) => state.precipFrequency,
-    frequencyValue: (state) => state.frequencyValue,
+    precipMagnitude: (state) => state.precipMagnitude,
+    magnitudeValue: (state) => state.magnitudeValue,
     durationValue: (state) => state.durationValue,
     nullValue: (state) => state.nullValue,
     basemapState: (state) => state.basemapState,

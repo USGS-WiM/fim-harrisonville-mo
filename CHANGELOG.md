@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Updated README with contributors and project info
 - Changed favicon to WIM favicon
 - Restyled sidebar
+- Replaced frequency slider with magnitude
 
 
 ### Fixed
