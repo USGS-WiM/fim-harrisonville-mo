@@ -40,7 +40,7 @@
           <v-tabs-items v-model="selectedTab">
             <v-tab-item value="About">
               <v-card flat>
-                <v-card-text>
+                <v-card-text class="modal-body">
                   <p>
                     The U.S. Geological Survey (USGS), in cooperation with the City of Harrisonville, Missouri, assessed flooding of Muddy Creek resulting from varying precipitation magnitudes and durations, antecedent soil moisture conditions, and channel conditions. The precipitation scenarios were used to develop a library of flood-inundation maps that included a 3.8-mile reach of Muddy Creek and tributaries within and adjacent to the city.
                   </p>
@@ -58,7 +58,7 @@
             </v-tab-item>
             <v-tab-item value="Disclaimer">
               <v-card flat>
-                <v-card-text>
+                <v-card-text class="modal-body">
                   <div id="links">
                     <a href="https://waterdata.usgs.gov/mo/nwis/uv/?site_no=383843094205501" target="_blank">View Site on NWIS</a><br>
                     <a href="https://water.usgs.gov/wateralert/subscribe2/?site_no=383843094205501&parm=00045" target="_blank">Subscribe to WaterAlert</a>
@@ -123,15 +123,21 @@
 
         <v-divider></v-divider>
 
-        <v-card-actions>
+        <v-card-actions class="footer">
+          <!-- Contact -->
+          <div class="contact">
+            For more information about the FIM Web Interface please contact <a href="https://wim.usgs.gov" target="_blank"><img src="../assets/wim_abbr_black.png"></a>
+          </div>
           <v-spacer></v-spacer>
-          <v-btn
-            color="primary"
-            text
-            @click="dialog = false"
-          >
-            Close
-          </v-btn>
+          <div>
+            <v-btn
+              color="primary"
+              @click="dialog = false"
+              class="close-btn"
+            >
+              Close
+            </v-btn>
+          </div>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -158,6 +164,10 @@
 </script>
 
 <style scoped>
+.modal-body {
+  font-size: 12px !important;
+}
+
 .text-center {
     margin-left: auto;
     margin-right: 0px;
@@ -205,5 +215,26 @@
 #logos {
   margin: 10px;
   height: 25px;
+}
+
+.footer {
+  flex-direction: column;
+  background-color: #e0e0e0;
+}
+
+.contact {
+  text-align: center;
+  font-size: 12px;
+  padding-bottom: 10px;
+}
+
+.contact img {
+  height: 16px;
+  vertical-align: middle;
+  margin-left: 3px;
+}
+
+.close-btn {
+  text-align: center;
 }
 </style>

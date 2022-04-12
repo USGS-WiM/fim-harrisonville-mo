@@ -30,12 +30,12 @@
 
         <v-divider></v-divider>
 
-        <v-card-actions>
+        <v-card-actions class="footer">
           <v-spacer></v-spacer>
           <v-btn
             color="primary"
-            text
             @click="dialog = false"
+            class="close-btn"
           >
             Close
           </v-btn>
@@ -79,5 +79,14 @@
 .user-guide-title {
   color: rgba(0, 0, 0, 0.54);
   font-size: 1em !important;
+}
+
+.footer {
+  background-color: #e0e0e0;
+  flex-direction: column;
+}
+
+.close-btn {
+  text-align: center;
 }
 </style>
