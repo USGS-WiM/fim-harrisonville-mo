@@ -73,28 +73,28 @@
             <v-card-text>
               <div class="moistureButtonDiv">
                 <v-subheader>Select an antecedant moisture condition:</v-subheader>
-                <v-btn-toggle borderless mandatory v-model="moistureSelected" class="moistureGroup">
+                <v-btn-toggle mandatory v-model="moistureSelected" class="moistureGroup">
                   <v-btn
-                    text
                     id="dry"
                     class="moistureBtn"
                     value="Dry"
+                    elevation="1"
                     @click="moistureSelected = 'Dry'"
                   >Dry
                   </v-btn>
                   <v-btn
-                    text
                     id="normal"
                     class="moistureBtn"
                     value="Normal"
+                    elevation="1"
                     @click="moistureSelected = 'Normal'"
                   >Normal
                   </v-btn>
                   <v-btn
-                    text
                     id="wet"
                     class="moistureBtn"
                     value="Wet"
+                    elevation="1"
                     @click="moistureSelected = 'Wet'"
                   >Wet
                   </v-btn>
