@@ -7,7 +7,7 @@
       <v-expansion-panels id="legendContainer">
         <v-expansion-panel>
           <!-- Legend title -->
-          <v-expansion-panel-header id="titleContainer">
+          <v-expansion-panel-header id="titleContainer" @click="getLegends()">
             <div id="legendExplanation">
               <v-icon 
                 small
@@ -22,13 +22,22 @@
             <div id="layers">
               <div class="legendIcon" v-if="fimAreaVisible">
                 <div
-                  style="padding-right: 10px;"
                   id="fimAreaIcon"
-                  class="
-                    wmm-square wmm-blue wmm-icon-square wmm-icon-blue wmm-size-25 wmm-borderless
-                  "
                 ></div>
-                <label v-if="fimAreaVisible">Flood-inundation Area</label>
+                <label>Flood-inundation Area</label>
+              </div>
+              <div class="legendIcon" v-if="precipGageVisible">
+                <div
+                  id="precipGageIcon"
+                  class="wmm-circle wmm-green wmm-icon-noicon wmm-icon-green wmm-size-15"
+                ></div>
+                <label id="precipGageLabel" v-if="precipGageVisible">Precipitation Gage</label>
+              </div>
+              <div class="legendIcon" v-if="studyBoundaryVisible">
+                <div
+                  id="studyBoundaryIcon"
+                ></div>
+                <label v-if="studyBoundaryVisible">Study Boundary</label>
               </div>
             </div>
             <!-- Toggleable layers -->
@@ -85,7 +94,10 @@ export default {
       },
       center: L.latLng(38.645, -94.345),
       floodLayer: null,
-      fimAreaVisible: false,
+      fimAreaVisible: true,
+      precipGageVisible: true,
+      studyBoundaryVisible: true,
+      legendLoaded: false,
     };
   },
   methods: {
@@ -157,6 +169,65 @@ export default {
         }
       }
     },
+    getLegends() {
+      if(!this.legendLoaded){
+        this.getFloodPolyLegend();
+        this.getStudyBoundaryLegend();
+      }
+      this.legendLoaded = true;
+    },
+    getFloodPolyLegend() {
+      // Add flood poly legend image for layer from map service
+        let legendURL = `https://fim.wim.usgs.gov/server/rest/services/FIM_MO/Floods_v2/MapServer/legend?f=pjson`;
+
+        let httpRequest = new XMLHttpRequest();
+
+        httpRequest.onreadystatechange = function() {
+          if (this.readyState == 4 && this.status == 200) {
+              let response = JSON.parse(this.responseText);
+              let floodPolyDiv = document.getElementById("fimAreaIcon");
+              response.layers.forEach(function(layer){
+                if(layer.layerName === "FloodPolys"){
+                  floodPolyDiv.innerHTML =
+                      "<img src=data:" +
+                      layer.legend[0].contentType +
+                      ";base64," +
+                      layer.legend[0].imageData +
+                      " alt=''/>"
+                }
+              })
+          }
+        };
+
+        httpRequest.open("GET", legendURL, true);
+        httpRequest.send();
+    },
+    getStudyBoundaryLegend() {
+      // Add legend images for layers from map service
+        let legendURL = `https://fim.wim.usgs.gov/server/rest/services/FIM_MO/Floods_v2/MapServer/legend?f=pjson`;
+
+        let httpRequest = new XMLHttpRequest();
+
+        httpRequest.onreadystatechange = function() {
+          if (this.readyState == 4 && this.status == 200) {
+              let response = JSON.parse(this.responseText);
+              let studyBoundaryDiv = document.getElementById("studyBoundaryIcon");
+              response.layers.forEach(function(layer){
+                if(layer.layerName === "MudharMO_studybounds"){
+                  studyBoundaryDiv.innerHTML =
+                      "<img src=data:" +
+                      layer.legend[0].contentType +
+                      ";base64," +
+                      layer.legend[0].imageData +
+                      " alt=''/>"
+                }
+              })
+          }
+        };
+
+        httpRequest.open("GET", legendURL, true);
+        httpRequest.send();
+    }
   },
   mounted() {
     this.createMap();
@@ -171,6 +242,14 @@ export default {
     // Watch basemap state and update visibility when state changes
     "$store.state.basemapState": function () {
       this.selectBasemap();
+    },
+    // Update the legend from wms when layer is added using slider
+    "$store.state.nullValue": function () {
+      if(!this.$store.state.nullValue){
+        this.legendLoaded = false;
+        this.getFloodPolyLegend();
+        this.legendLoaded = true;
+      }
     },
   },
 };
@@ -218,28 +297,29 @@ export default {
   }
 
   .legendIcon {
-    display: inline-block;
+    display: flex;
     position: relative;
     margin: 8px;
-    line-height: 24px;
-    height: 24px;
   }
 
   .legendIcon div {
     vertical-align: middle;
-    label {
-      display: inline-block;
-      -webkit-justify-content: center;
-      justify-content: center;
-      padding-left: 5px;
-    }
+    margin-left: 0px !important; 
+    padding-right: 20px;
+  }
+
+  .legendIcon img {
+    vertical-align: middle;
+  }
+
+  #precipGageLabel {
+    padding-left: 40px;
   }
 
   .legendIcon label {
     display: inline-block;
     -webkit-justify-content: center;
     justify-content: center;
-    padding-left: 20px;
     font-family: "Public Sans", sans-serif;
   }
 </style>
