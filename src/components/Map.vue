@@ -51,6 +51,9 @@ export default {
       },
       center: L.latLng(38.645, -94.345),
       floodLayer: null,
+      depthgridLayer: null,
+      floodStageDict: [{1: 0}, {1.5: 1}, {2: 2}, {2.5: 3}, {3: 4}, {3.5: 5}, {4: 6}],
+      selectedDepthGrid: 6,
     };
   },
   methods: {
@@ -91,15 +94,53 @@ export default {
 
     },
     getPolygon(value) {
+      // Remove depth grid layer before adding a new one
+      if(this.map.hasLayer(this.depthgridLayer)){
+          this.map.removeLayer(this.depthgridLayer);
+      }
+      // Remove flood poly layer before adding a new one
+      if(this.map.hasLayer(this.floodLayer)){
+          this.floodLayer.remove();
+      }
       if(value !== null){
         this.$store.state.nullValue = false;
         this.floodLayer.setWhere(`STAGE=${value}`)
         this.floodLayer.addTo(this.map);
+
+        // Add depth grid for popup
+        let depthgridURL = `https://fim.wim.usgs.gov/server/rest/services/FIM_MO/Depth_Grids/MapServer`;
+
+        let self = this;
+        let floodStages = JSON.parse(JSON.stringify(this.floodStageDict));
+        floodStages.forEach(function(obj, i) {
+          let key = Object.keys(obj);
+          if(Number(key) === value){
+            self.selectedDepthGrid = floodStages[i][value];
+          }
+        })
+
+        this.depthgridLayer = esri.dynamicMapLayer({
+          url: depthgridURL,
+          layers: [this.selectedDepthGrid],
+          f: "image",
+          opacity: 0,
+        })
+
+        this.depthgridLayer.bindPopup(function (error, featureCollection) {
+          if (error || featureCollection.features.length === 0) {
+            return false;
+          } else {
+            if(featureCollection.features[0].properties["Pixel Value"] !== 'NoData'){
+              return L.Util.template('<h3 class="popup">Water Depth</h3>' + featureCollection.features[0].properties["Pixel Value"] + ' ft');
+            }else{
+              return false;
+            }
+          }
+        });
+
+        this.depthgridLayer.addTo(this.map)
       }else{
         this.$store.state.nullValue = true;
-        if(this.map.hasLayer(this.floodLayer)){
-          this.floodLayer.remove();
-        }
       }
     },
     // Compare tile provider name to basemap state and add to map
@@ -145,5 +186,9 @@ export default {
     font-family: "Public Sans", sans-serif;
     /* Set z-index so sidebar appears above map on mobile */
     z-index: 1;
+  }
+
+  .popup {
+    font-family: "Public Sans", sans-serif;
   }
 </style>
