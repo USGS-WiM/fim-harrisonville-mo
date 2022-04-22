@@ -13,17 +13,21 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Added polygon layer to map
 - Polygon layer queried with slider
 - Added basemaps
+- Application header
+- About/Disclaimer dialog and text
+- User Guide (no text provided yet)
 - Antecedant moisture selector
 
 ### Changed
 
 - Updated README with contributors and project info
 - Changed favicon to WIM favicon
+- Expansion panel styling
 - Restyled sidebar
 - Replaced frequency slider with magnitude
 
 
 ### Fixed
 
--
+- Removed vertical scrollbar
 
