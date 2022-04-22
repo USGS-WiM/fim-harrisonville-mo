@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Added polygon layer to map
 - Polygon layer queried with slider
 - Added basemaps
+- Precipitation gage and study boundary layers
 - Application header
 - About/Disclaimer dialog and text
 - User Guide (no text provided yet)

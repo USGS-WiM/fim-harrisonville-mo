@@ -51,6 +51,8 @@ export default {
       },
       center: L.latLng(38.645, -94.345),
       floodLayer: null,
+      precipGageLayer: null,
+      studyboundsLayer: null,
     };
   },
   methods: {
@@ -64,9 +66,33 @@ export default {
         layers: [self.tileProviders["Streets"]]
       });
 
-      this.loadPolygon();
+      this.loadLayers();
     },
-    loadPolygon() {
+    loadLayers() {
+      let icon = L.divIcon({className: 'wmm-circle wmm-green wmm-icon-noicon wmm-icon-green wmm-size-15'});
+
+      let precipGageURL = `https://fim.wim.usgs.gov/server/rest/services/FIM_MO/Floods_v2/MapServer/0`;
+
+      this.precipGageLayer = esri.featureLayer({
+        url: precipGageURL,
+        pointToLayer: function (geojson, latlng) {
+          return L.marker(latlng, {
+            icon: icon, opacity: 1
+          });
+        }
+      })
+
+      this.precipGageLayer.addTo(this.map);
+
+      let studyboundsURL = `https://fim.wim.usgs.gov/server/rest/services/FIM_MO/Floods_v2/MapServer/1`;
+
+      this.studyboundsLayer = esri.featureLayer({
+        url: studyboundsURL,
+        style: {color: '#FF0000', weight: 2, fillOpacity: 1}
+      })
+      
+      this.studyboundsLayer.addTo(this.map);
+
       let polygonURL = `https://fim.wim.usgs.gov/server/rest/services/FIM_MO/Floods_v2/MapServer/2`;
 
       this.floodLayer = esri.featureLayer({
@@ -140,6 +166,7 @@ export default {
 };
 </script>
 <style>
+  @import "../styles/markers.css";
   #map {
     height: 100%;
     width: 100%;
