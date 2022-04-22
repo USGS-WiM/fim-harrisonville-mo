@@ -68,6 +68,7 @@ export default {
 
       this.loadLayers();
     },
+
     loadLayers() {
       let icon = L.divIcon({className: 'wmm-circle wmm-green wmm-icon-noicon wmm-icon-green wmm-size-15'});
 
@@ -97,12 +98,13 @@ export default {
 
       this.floodLayer = esri.featureLayer({
         url: polygonURL,
+        style: {color: '#648BD9', weight: 0, fillOpacity: 0.75},
+        opacity: 1
       })
     },
-    queryTable(duration, frequency) {
+    queryTable(duration, magnitude, moisture) {
       let self = this;
-      let tableURL = `https://fim.wim.usgs.gov/server/rest/services/FIM_MO/Floods/MapServer/1/query?where=Duration=${duration}&outFields=${frequency}&f=pjson`;
-
+      let tableURL = `https://fim.wim.usgs.gov/server/rest/services/FIM_MO/Floods_v2/MapServer/3/query?where=Duration=${duration}+AND+Magnitude=${magnitude}&outFields=${moisture}&f=pjson`;
       let httpRequest = new XMLHttpRequest();
 
       httpRequest.onreadystatechange = function() {
@@ -151,11 +153,11 @@ export default {
     this.createMap();
   },
   watch: {
-    "$store.state.durationValue": function () {
-      this.queryTable(this.$store.state.durationValue, this.$store.state.frequencyValue);
+    "$store.state.magnitudeValue": function () {
+      this.queryTable(this.$store.state.durationValue, this.$store.state.magnitudeValue, this.$store.state.moistureState);
     },
-    "$store.state.frequencyValue": function () {
-      this.queryTable(this.$store.state.durationValue, this.$store.state.frequencyValue);
+    "$store.state.moistureState": function () {
+      this.queryTable(this.$store.state.durationValue, this.$store.state.magnitudeValue, this.$store.state.moistureState);
     },
     // Watch basemap state and update visibility when state changes
     "$store.state.basemapState": function () {

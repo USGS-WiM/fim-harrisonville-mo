@@ -14,14 +14,21 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Polygon layer queried with slider
 - Added basemaps
 - Precipitation gage and study boundary layers
+- Application header
+- About/Disclaimer dialog and text
+- User Guide (no text provided yet)
+- Antecedant moisture selector
 
 ### Changed
 
 - Updated README with contributors and project info
 - Changed favicon to WIM favicon
+- Expansion panel styling
+- Restyled sidebar
+- Replaced frequency slider with magnitude
 
 
 ### Fixed
 
--
+- Removed vertical scrollbar
 
