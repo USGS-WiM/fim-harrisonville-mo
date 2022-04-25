@@ -119,6 +119,8 @@ export default {
       httpRequest.open("GET", tableURL, true);
       httpRequest.send();
 
+      // Close depth grid popup
+      this.map.closePopup();
     },
     getPolygon(value) {
       // Remove depth grid layer before adding a new one
