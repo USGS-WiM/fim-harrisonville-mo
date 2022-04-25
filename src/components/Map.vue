@@ -170,6 +170,13 @@ export default {
       this.map.closePopup();
     },
     getPolygon(value) {
+      // If the flood stage hasn't changed, MapFilters will display a message
+      if(value === this.$store.state.floodStage){
+        this.$store.commit("getNoChangeValue", true);
+      }else{
+        this.$store.commit("getFloodStage", value);
+        this.$store.commit("getNoChangeValue", false);
+      }
       // Remove depth grid layer before adding a new one
       if(this.map.hasLayer(this.depthgridLayer)){
           this.map.removeLayer(this.depthgridLayer);
