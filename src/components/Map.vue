@@ -113,7 +113,7 @@ export default {
         center: self.center,
         zoom: self.zoom,
         zoomSnap: 0.5,
-        layers: [self.tileProviders["Streets"]]
+        layers: [self.tileProviders["Topo"]]
       });
 
       this.loadLayers();

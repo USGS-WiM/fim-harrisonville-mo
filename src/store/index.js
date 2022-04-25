@@ -13,7 +13,7 @@ export default new Vuex.Store({
     nullValue: false,
     noChangeValue: false,
     floodStage: 4.5,
-    basemapState: "Streets",
+    basemapState: "Topo",
     moistureState: "Normal",
   },
   mutations: {

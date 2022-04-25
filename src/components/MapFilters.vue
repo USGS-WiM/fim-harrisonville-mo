@@ -8,6 +8,19 @@
             <v-btn-toggle borderless mandatory v-model="basemapSelected" class="basemapGroup">
               <v-btn
                 text
+                id="topo"
+                class="basemapBtn"
+                value="Topo"
+                @click="basemapSelected = 'Topo'"
+              >
+                <img
+                  class="basemapThumb"
+                  alt=""
+                  src="../assets/topo.jpg"
+                /><label for="topo">Topo</label>
+              </v-btn>
+              <v-btn
+                text
                 id="streets"
                 class="basemapBtn"
                 value="Streets"
@@ -31,19 +44,6 @@
                   alt=""
                   src="../assets/satellite.jpg"
                 /><label for="satellite">Satellite</label>
-              </v-btn>
-              <v-btn
-                text
-                id="topo"
-                class="basemapBtn"
-                value="Topo"
-                @click="basemapSelected = 'Topo'"
-              >
-                <img
-                  class="basemapThumb"
-                  alt=""
-                  src="../assets/topo.jpg"
-                /><label for="topo">Topo</label>
               </v-btn>
               <v-btn
                 text
