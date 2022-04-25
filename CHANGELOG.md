@@ -29,9 +29,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Restyled sidebar
 - Replaced frequency slider with magnitude
 - Changed default basemap to Topo
+- Popup values to water depth range
 
 
 ### Fixed
 
 - Removed vertical scrollbar
+- Legend images from wms not loading when legend not yet opened and no polygon loaded
 

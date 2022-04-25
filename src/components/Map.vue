@@ -26,18 +26,18 @@
                 ></div>
                 <label>Flood-inundation Area</label>
               </div>
-              <div class="legendIcon" v-if="precipGageVisible">
+              <div class="legendIcon">
                 <div
                   id="precipGageIcon"
                   class="wmm-circle wmm-green wmm-icon-noicon wmm-icon-green wmm-size-15"
                 ></div>
-                <label id="precipGageLabel" v-if="precipGageVisible">Precipitation Gage</label>
+                <label id="precipGageLabel">Precipitation Gage</label>
               </div>
-              <div class="legendIcon" v-if="studyBoundaryVisible">
+              <div class="legendIcon">
                 <div
                   id="studyBoundaryIcon"
                 ></div>
-                <label v-if="studyBoundaryVisible">Study Boundary</label>
+                <label>Study Boundary</label>
               </div>
             </div>
             <!-- Toggleable layers -->
@@ -95,9 +95,8 @@ export default {
       center: L.latLng(38.645, -94.345),
       floodLayer: null,
       fimAreaVisible: true,
-      precipGageVisible: true,
-      studyBoundaryVisible: true,
       legendLoaded: false,
+      legendInit: false,
       depthgridLayer: null,
       floodStageDict: [{1: 0}, {1.5: 1}, {2: 2}, {2.5: 3}, {3: 4}, {3.5: 5}, {4: 6}],
       selectedDepthGrid: 6,
@@ -185,6 +184,11 @@ export default {
       if(this.map.hasLayer(this.floodLayer)){
           this.floodLayer.remove();
       }
+
+      function roundToNearest(roundTo, value) {
+        return Math.round(value/roundTo)*roundTo;
+      }
+
       if(value !== null){
         this.$store.state.nullValue = false;
         this.floodLayer.setWhere(`STAGE=${value}`)
@@ -215,7 +219,46 @@ export default {
             return false;
           } else {
             if(featureCollection.features[0].properties["Pixel Value"] !== 'NoData'){
-              return L.Util.template('<h3 class="popup">Water Depth</h3>' + featureCollection.features[0].properties["Pixel Value"] + ' ft');
+              // Code from FIM
+              // Placeholder value for depth range for now
+              let depthRange = 1;
+              if (depthRange == null) {
+                  depthRange = 1;
+              }
+
+              let factor = (Number(depthRange)/2) % 0.5;
+              if (factor == 0) { //second half of OR only to handle libraries without depth range even though it is a required field
+                  factor = 0.5;
+              }
+
+              let gridAttr = featureCollection.features[0].properties["Pixel Value"];
+              let rndGridValue = roundToNearest(factor,gridAttr);
+
+              let lowValue = rndGridValue-Number(depthRange)/2;
+              let highValue = rndGridValue+Number(depthRange)/2;
+
+              //code to adjust value so range falls on .0s and .5s
+              let roundingRemainder = (rndGridValue+Number(depthRange)/2) % 0.5;
+              if (roundingRemainder != 0) {
+                  let diff = rndGridValue - gridAttr;
+                  if (diff > 0) {
+                      lowValue = Number((rndGridValue - Number(depthRange)/2 - factor).toFixed(1));
+                      highValue = Number((rndGridValue + Number(depthRange)/2 - factor).toFixed(1));
+                  } else {
+                      lowValue = Number((rndGridValue - Number(depthRange)/2 + factor).toFixed(1));
+                      highValue = Number((rndGridValue + Number(depthRange)/2 + factor).toFixed(1));
+                  }
+              }
+
+              //check for negative values of lowValue
+              if (lowValue < 0) {
+                  lowValue = 0;
+              }
+
+              //using depth range value in site file
+              let range = lowValue.toString() + ' - ' + highValue.toString();
+
+              return L.Util.template('<h3 class="popup">Water Depth</h3> Range: ' + range + ' ft');
             }else{
               return false;
             }
@@ -250,6 +293,7 @@ export default {
       }
     },
     getLegends() {
+      this.legendInit = true;
       if(!this.legendLoaded){
         this.getFloodPolyLegend();
         this.getStudyBoundaryLegend();
@@ -326,9 +370,12 @@ export default {
     // Update the legend from wms when layer is added using slider
     "$store.state.nullValue": function () {
       if(!this.$store.state.nullValue){
-        this.legendLoaded = false;
-        this.getFloodPolyLegend();
-        this.legendLoaded = true;
+        // Legend has been opened once, the html will exist
+        if(this.legendInit){
+          this.legendLoaded = false;
+          this.getFloodPolyLegend();
+          this.legendLoaded = true;
+        }
       }
     },
   },
