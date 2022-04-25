@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Polygon layer queried with slider
 - Added basemaps
 - Added legend
+- Add depth grids and popups
 - Precipitation gage and study boundary layers
 - Application header
 - About/Disclaimer dialog and text
