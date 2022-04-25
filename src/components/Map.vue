@@ -132,6 +132,11 @@ export default {
         }
       })
 
+      // Precip gage popup
+      this.precipGageLayer.bindPopup(function () {
+        return L.Util.template("<a href='https://waterdata.usgs.gov/monitoring-location/383843094205501/' target='_blank'>NWIS Site 383843094205501</a>");
+      });
+
       this.precipGageLayer.addTo(this.map);
 
       let studyboundsURL = `https://fim.wim.usgs.gov/server/rest/services/FIM_MO/Floods_v2/MapServer/1`;
