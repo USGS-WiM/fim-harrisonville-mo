@@ -54,6 +54,8 @@ export default {
       depthgridLayer: null,
       floodStageDict: [{1: 0}, {1.5: 1}, {2: 2}, {2.5: 3}, {3: 4}, {3.5: 5}, {4: 6}],
       selectedDepthGrid: 6,
+      precipGageLayer: null,
+      studyboundsLayer: null,
     };
   },
   methods: {
@@ -67,19 +69,44 @@ export default {
         layers: [self.tileProviders["Streets"]]
       });
 
-      this.loadPolygon();
+      this.loadLayers();
     },
-    loadPolygon() {
-      let polygonURL = `https://fim.wim.usgs.gov/server/rest/services/FIM_MO/Floods/MapServer/0`;
+    loadLayers() {
+      let icon = L.divIcon({className: 'wmm-circle wmm-green wmm-icon-noicon wmm-icon-green wmm-size-15'});
+
+      let precipGageURL = `https://fim.wim.usgs.gov/server/rest/services/FIM_MO/Floods_v2/MapServer/0`;
+
+      this.precipGageLayer = esri.featureLayer({
+        url: precipGageURL,
+        pointToLayer: function (geojson, latlng) {
+          return L.marker(latlng, {
+            icon: icon, opacity: 1
+          });
+        }
+      })
+
+      this.precipGageLayer.addTo(this.map);
+
+      let studyboundsURL = `https://fim.wim.usgs.gov/server/rest/services/FIM_MO/Floods_v2/MapServer/1`;
+
+      this.studyboundsLayer = esri.featureLayer({
+        url: studyboundsURL,
+        style: {color: '#FF0000', weight: 2, fillOpacity: 1}
+      })
+      
+      this.studyboundsLayer.addTo(this.map);
+
+      let polygonURL = `https://fim.wim.usgs.gov/server/rest/services/FIM_MO/Floods_v2/MapServer/2`;
 
       this.floodLayer = esri.featureLayer({
         url: polygonURL,
+        style: {color: '#648BD9', weight: 0, fillOpacity: 0.75},
+        opacity: 1
       })
     },
-    queryTable(duration, frequency) {
+    queryTable(duration, magnitude, moisture) {
       let self = this;
-      let tableURL = `https://fim.wim.usgs.gov/server/rest/services/FIM_MO/Floods/MapServer/1/query?where=Duration=${duration}&outFields=${frequency}&f=pjson`;
-
+      let tableURL = `https://fim.wim.usgs.gov/server/rest/services/FIM_MO/Floods_v2/MapServer/3/query?where=Duration=${duration}+AND+Magnitude=${magnitude}&outFields=${moisture}&f=pjson`;
       let httpRequest = new XMLHttpRequest();
 
       httpRequest.onreadystatechange = function() {
@@ -166,11 +193,11 @@ export default {
     this.createMap();
   },
   watch: {
-    "$store.state.durationValue": function () {
-      this.queryTable(this.$store.state.durationValue, this.$store.state.frequencyValue);
+    "$store.state.magnitudeValue": function () {
+      this.queryTable(this.$store.state.durationValue, this.$store.state.magnitudeValue, this.$store.state.moistureState);
     },
-    "$store.state.frequencyValue": function () {
-      this.queryTable(this.$store.state.durationValue, this.$store.state.frequencyValue);
+    "$store.state.moistureState": function () {
+      this.queryTable(this.$store.state.durationValue, this.$store.state.magnitudeValue, this.$store.state.moistureState);
     },
     // Watch basemap state and update visibility when state changes
     "$store.state.basemapState": function () {
@@ -180,6 +207,7 @@ export default {
 };
 </script>
 <style>
+  @import "../styles/markers.css";
   #map {
     height: 100%;
     width: 100%;
