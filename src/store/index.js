@@ -11,6 +11,8 @@ export default new Vuex.Store({
     magnitudeValue: null,
     durationValue: 24,
     nullValue: false,
+    noChangeValue: false,
+    floodStage: 4.5,
     basemapState: "Streets",
     moistureState: "Normal",
   },
@@ -33,6 +35,12 @@ export default new Vuex.Store({
     getNullValue(state, nullValue) {
       state.nullValue = nullValue;
     },
+    getNoChangeValue(state, noChangeValue) {
+      state.noChangeValue = noChangeValue;
+    },
+    getFloodStage(state, floodStage) {
+      state.floodStage = floodStage;
+    },
     getBasemapState(state, selected) {
       state.basemapState = selected;
     },
@@ -47,6 +55,8 @@ export default new Vuex.Store({
     magnitudeValue: (state) => state.magnitudeValue,
     durationValue: (state) => state.durationValue,
     nullValue: (state) => state.nullValue,
+    noChangeValue: (state) => state.noChangeValue,
+    floodStage: (state) => state.floodStage,
     basemapState: (state) => state.basemapState,
     moistureState: (state) => state.moistureState,
   },

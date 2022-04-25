@@ -147,6 +147,14 @@
         >
           No flood stage available at this duration and magnitude.
         </v-alert>
+        <v-alert
+          type="warning"
+          dense
+          text
+          v-if="noChange"
+        >
+          No change in flood stage between the current and previously selected magnitude, duration, and moisture values.
+        </v-alert>
       </v-expansion-panel-content>
     </v-expansion-panel>
   </v-expansion-panels>
@@ -175,6 +183,7 @@
         magnitudeDisplayed: 13.1,
         currentMagnitudeIndex: 10,
         nullValue: false,
+        noChange: false,
       }
     },
     mounted() {
@@ -204,6 +213,9 @@
     watch: {
       "$store.state.nullValue": function () {
         this.nullValue = this.$store.state.nullValue;
+      },
+      "$store.state.noChangeValue": function () {
+        this.noChange = this.$store.state.noChangeValue;
       },
     },
     computed: {
@@ -263,7 +275,7 @@
           this.$store.commit("getMoistureState", value);
         },
       },
-    }
+    },
   }
 </script>
 <style>

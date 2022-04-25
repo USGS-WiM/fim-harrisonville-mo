@@ -118,6 +118,13 @@ export default {
 
     },
     getPolygon(value) {
+      // If the flood stage hasn't changed, MapFilters will display a message
+      if(value === this.$store.state.floodStage){
+        this.$store.commit("getNoChangeValue", true);
+      }else{
+        this.$store.commit("getFloodStage", value);
+        this.$store.commit("getNoChangeValue", false);
+      }
       if(value !== null){
         this.$store.state.nullValue = false;
         this.floodLayer.setWhere(`STAGE=${value}`)
