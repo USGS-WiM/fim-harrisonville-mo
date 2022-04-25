@@ -3,6 +3,49 @@
     <div style="height: 100%; width: 100%">
       <!-- a leaflet map -->
       <div id="map"></div>
+      <!-- Legend -->
+      <v-expansion-panels id="legendContainer">
+        <v-expansion-panel>
+          <!-- Legend title -->
+          <v-expansion-panel-header id="titleContainer" @click="getLegends()">
+            <div id="legendExplanation">
+              <v-icon 
+                small
+                color="#333"
+                >mdi-shape
+              </v-icon>
+              <label>Explanation</label>
+            </div>
+          </v-expansion-panel-header>
+          <v-expansion-panel-content id="legendContent">
+          <!-- Layers (not toggleable) -->
+            <div id="layers">
+              <div class="legendIcon" v-if="fimAreaVisible">
+                <div
+                  id="fimAreaIcon"
+                ></div>
+                <label>Flood-inundation Area</label>
+              </div>
+              <div class="legendIcon" v-if="precipGageVisible">
+                <div
+                  id="precipGageIcon"
+                  class="wmm-circle wmm-green wmm-icon-noicon wmm-icon-green wmm-size-15"
+                ></div>
+                <label id="precipGageLabel" v-if="precipGageVisible">Precipitation Gage</label>
+              </div>
+              <div class="legendIcon" v-if="studyBoundaryVisible">
+                <div
+                  id="studyBoundaryIcon"
+                ></div>
+                <label v-if="studyBoundaryVisible">Study Boundary</label>
+              </div>
+            </div>
+            <!-- Toggleable layers -->
+            <!-- <div id="toggleableLayers">
+            </div> -->
+          </v-expansion-panel-content>
+        </v-expansion-panel>
+      </v-expansion-panels>
     </div>
   </v-main>
 </template>
@@ -51,6 +94,10 @@ export default {
       },
       center: L.latLng(38.645, -94.345),
       floodLayer: null,
+      fimAreaVisible: true,
+      precipGageVisible: true,
+      studyBoundaryVisible: true,
+      legendLoaded: false,
       depthgridLayer: null,
       floodStageDict: [{1: 0}, {1.5: 1}, {2: 2}, {2.5: 3}, {3: 4}, {3.5: 5}, {4: 6}],
       selectedDepthGrid: 6,
@@ -135,6 +182,7 @@ export default {
         this.$store.state.nullValue = false;
         this.floodLayer.setWhere(`STAGE=${value}`)
         this.floodLayer.addTo(this.map);
+        this.fimAreaVisible = true;
 
         // Add depth grid for popup
         let depthgridURL = `https://fim.wim.usgs.gov/server/rest/services/FIM_MO/Depth_Grids/MapServer`;
@@ -170,6 +218,10 @@ export default {
         this.depthgridLayer.addTo(this.map)
       }else{
         this.$store.state.nullValue = true;
+        if(this.map.hasLayer(this.floodLayer)){
+          this.floodLayer.remove();
+        }
+        this.fimAreaVisible = false;
       }
     },
     // Compare tile provider name to basemap state and add to map
@@ -190,6 +242,65 @@ export default {
         }
       }
     },
+    getLegends() {
+      if(!this.legendLoaded){
+        this.getFloodPolyLegend();
+        this.getStudyBoundaryLegend();
+      }
+      this.legendLoaded = true;
+    },
+    getFloodPolyLegend() {
+      // Add flood poly legend image for layer from map service
+        let legendURL = `https://fim.wim.usgs.gov/server/rest/services/FIM_MO/Floods_v2/MapServer/legend?f=pjson`;
+
+        let httpRequest = new XMLHttpRequest();
+
+        httpRequest.onreadystatechange = function() {
+          if (this.readyState == 4 && this.status == 200) {
+              let response = JSON.parse(this.responseText);
+              let floodPolyDiv = document.getElementById("fimAreaIcon");
+              response.layers.forEach(function(layer){
+                if(layer.layerName === "FloodPolys"){
+                  floodPolyDiv.innerHTML =
+                      "<img src=data:" +
+                      layer.legend[0].contentType +
+                      ";base64," +
+                      layer.legend[0].imageData +
+                      " alt=''/>"
+                }
+              })
+          }
+        };
+
+        httpRequest.open("GET", legendURL, true);
+        httpRequest.send();
+    },
+    getStudyBoundaryLegend() {
+      // Add legend images for layers from map service
+        let legendURL = `https://fim.wim.usgs.gov/server/rest/services/FIM_MO/Floods_v2/MapServer/legend?f=pjson`;
+
+        let httpRequest = new XMLHttpRequest();
+
+        httpRequest.onreadystatechange = function() {
+          if (this.readyState == 4 && this.status == 200) {
+              let response = JSON.parse(this.responseText);
+              let studyBoundaryDiv = document.getElementById("studyBoundaryIcon");
+              response.layers.forEach(function(layer){
+                if(layer.layerName === "MudharMO_studybounds"){
+                  studyBoundaryDiv.innerHTML =
+                      "<img src=data:" +
+                      layer.legend[0].contentType +
+                      ";base64," +
+                      layer.legend[0].imageData +
+                      " alt=''/>"
+                }
+              })
+          }
+        };
+
+        httpRequest.open("GET", legendURL, true);
+        httpRequest.send();
+    }
   },
   mounted() {
     this.createMap();
@@ -205,6 +316,14 @@ export default {
     "$store.state.basemapState": function () {
       this.selectBasemap();
     },
+    // Update the legend from wms when layer is added using slider
+    "$store.state.nullValue": function () {
+      if(!this.$store.state.nullValue){
+        this.legendLoaded = false;
+        this.getFloodPolyLegend();
+        this.legendLoaded = true;
+      }
+    },
   },
 };
 </script>
@@ -218,6 +337,64 @@ export default {
     z-index: 1;
   }
 
+  #legendContainer {
+    border-radius: 5px 5px 5px 5px;
+    box-shadow: 0 3px 6px rgba(30, 39, 50, 0.2), 0 3px 6px rgba(30, 39, 50, 0.2);
+    right: 10px;
+    top: 45px;
+    height: auto;
+    width: 225px;
+    position: absolute;
+    z-index: 999;
+    font-size: 14px;
+    opacity: 0.75;
+  }
+
+  #legendExplanation {
+    box-sizing: border-box;
+    width: 100%;
+    text-align: center;
+    font-weight: bold;
+    font-size: 14px;
+  }
+
+  #legendExplanation label {
+    padding-left: 5px;
+    font-family: "Public Sans", sans-serif;
+  }
+
+  #legendContent {
+    max-height: 65vh;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+
+  .legendIcon {
+    display: flex;
+    position: relative;
+    margin: 8px;
+  }
+
+  .legendIcon div {
+    vertical-align: middle;
+    margin-left: 0px !important; 
+    padding-right: 20px;
+  }
+
+  .legendIcon img {
+    vertical-align: middle;
+  }
+
+  #precipGageLabel {
+    padding-left: 40px;
+  }
+
+  .legendIcon label {
+    display: inline-block;
+    -webkit-justify-content: center;
+    justify-content: center;
+  }
+  
   .popup {
     font-family: "Public Sans", sans-serif;
   }
