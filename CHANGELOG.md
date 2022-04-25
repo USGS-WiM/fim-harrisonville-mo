@@ -28,6 +28,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Expansion panel styling
 - Restyled sidebar
 - Replaced frequency slider with magnitude
+- Changed default basemap to Topo
 
 
 ### Fixed
