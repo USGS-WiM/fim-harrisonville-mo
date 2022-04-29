@@ -73,32 +73,35 @@
             <v-card-text>
               <div class="moistureButtonDiv">
                 <v-subheader>Select an antecedant moisture condition:</v-subheader>
-                <v-btn-toggle mandatory v-model="moistureSelected" class="moistureGroup">
-                  <v-btn
-                    id="dry"
-                    class="moistureBtn"
-                    value="Dry"
-                    elevation="1"
-                    @click="moistureSelected = 'Dry'"
-                  >Dry
-                  </v-btn>
-                  <v-btn
-                    id="normal"
-                    class="moistureBtn"
-                    value="Normal"
-                    elevation="1"
-                    @click="moistureSelected = 'Normal'"
-                  >Normal
-                  </v-btn>
-                  <v-btn
-                    id="wet"
-                    class="moistureBtn"
-                    value="Wet"
-                    elevation="1"
-                    @click="moistureSelected = 'Wet'"
-                  >Wet
-                  </v-btn>
-                </v-btn-toggle>
+                <div class="button-row">
+                  <v-btn-toggle mandatory v-model="moistureSelected" class="moistureGroup">
+                    <v-btn
+                      id="dry"
+                      class="moistureBtn"
+                      value="Dry"
+                      elevation="1"
+                      @click="moistureSelected = 'Dry'"
+                    >Dry
+                    </v-btn>
+                    <v-btn
+                      id="normal"
+                      class="moistureBtn"
+                      value="Normal"
+                      elevation="1"
+                      @click="moistureSelected = 'Normal'"
+                    >Normal
+                    </v-btn>
+                    <v-btn
+                      id="wet"
+                      class="moistureBtn"
+                      value="Wet"
+                      elevation="1"
+                      @click="moistureSelected = 'Wet'"
+                    >Wet
+                    </v-btn>
+                  </v-btn-toggle>
+                  <RunoffModal></RunoffModal>
+                </div>
               </div>
             </v-card-text>
           </v-card>
@@ -161,7 +164,12 @@
 </template>
 
 <script>
+  import RunoffModal from '../components/RunoffModal';
+
   export default {
+    components: {
+      RunoffModal
+    },
     data () {
       return {
         checkbox: true,
@@ -314,6 +322,13 @@
   width: 100%;
 }
 
+.button-row {
+  display: inline-flex;
+  width: 100%;
+  height: 48px;
+  line-height: 48px;
+}
+
 .moistureBtn {
   width: 33%;
 }
@@ -322,6 +337,7 @@
   flex-direction: row;
   width: 100%;
   justify-content: space-evenly;
+  margin-right: 10px;
 }
 
 .moistureButtonDiv {

@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - User Guide (no text provided yet)
 - Antecedant moisture selector
 - Popup in precipitation gage with NWIS gage site link
+- Antecedant moisture description modal
 
 ### Changed
 
