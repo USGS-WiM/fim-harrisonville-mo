@@ -60,8 +60,12 @@
               <v-card flat>
                 <v-card-text class="modal-body">
                   <div id="links">
-                    <a href="https://waterdata.usgs.gov/mo/nwis/uv/?site_no=383843094205501" target="_blank">View Site on NWIS</a><br>
-                    <a href="https://water.usgs.gov/wateralert/subscribe2/?site_no=383843094205501&parm=00045" target="_blank">Subscribe to WaterAlert</a>
+                    <v-btn class="link-btn" color="primary">
+                      <a class="link" href="https://waterdata.usgs.gov/mo/nwis/uv/?site_no=383843094205501" target="_blank">View Site on NWIS</a>
+                    </v-btn>
+                    <v-btn class="link-btn" color="primary">
+                      <a class="link" href="https://water.usgs.gov/wateralert/subscribe2/?site_no=383843094205501&parm=00045" target="_blank">Subscribe to WaterAlert!</a>
+                    </v-btn>
                   </div>
                   <h2>
                     Citations
@@ -199,6 +203,18 @@
 
 #links {
   margin-bottom: 10px;
+  text-align: center;
+}
+
+.link-btn {
+  margin-bottom: 10px;
+  margin-right: 10px;
+  text-transform: none;
+}
+
+.link {
+  color: #FFF !important;
+  text-decoration: none;
 }
 
 .harrisonville-logo {

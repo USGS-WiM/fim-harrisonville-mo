@@ -32,7 +32,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Replaced frequency slider with magnitude
 - Changed default basemap to Topo
 - Popup values to water depth range
-
+- NWIS and Subscribe to WaterAlert links to buttons
 
 ### Fixed
 
