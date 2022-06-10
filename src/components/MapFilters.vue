@@ -160,21 +160,23 @@
         </v-alert>
       </v-expansion-panel-content>
     </v-expansion-panel>
+    <NWISTable></NWISTable>
   </v-expansion-panels>
 </template>
 
 <script>
   import RunoffModal from '../components/RunoffModal';
+  import NWISTable from '../components/NWISTable';
 
   export default {
     components: {
-      RunoffModal
+      RunoffModal,
+      NWISTable
     },
     data () {
       return {
         checkbox: true,
         panel: [1],
-        // durationValues: [0.5, 1, 2, 3, 4, 6, 8, 12, 24],
         magnitudeDisplayValues: [],
         durationSteps: [{0.5: 0.5}, {1: 1}, {1.5: 2}, {2: 3}, {2.5: 4}, {3: 6}, {3.5: 8}, {4: 12}, {4.5: 24}],
         magnitudeSteps: [],
@@ -192,10 +194,9 @@
         currentMagnitudeIndex: 10,
         nullValue: false,
         noChange: false,
+        durationChangedFromTable: false,
+        magnitudeFromTable: null,
       }
-    },
-    mounted() {
-      this.changeMagnitude();
     },
     methods: {
     changeMagnitude() {
@@ -209,8 +210,26 @@
               self.magnitudeTicks = response.features.map(i => {return i.attributes.Magnitude});
               self.magnitudeDisplayValues = self.magnitudeTicks;
               let index = 0;
-              self.magnitudeSteps = response.features.map((i) => {index ++; return {[index]: i.attributes.Magnitude}});
-              self.precipMagnitude = self.currentMagnitudeIndex;
+              // Get closest magnitude display value for current value
+              if(self.durationChangedFromTable){
+                self.magnitudeValue = self.magnitudeDisplayValues.reduce((a, b) => Math.abs(b - self.magnitudeFromTable) < Math.abs(a - self.magnitudeFromTable) ? b : a);
+                self.magnitudeDisplayed = self.magnitudeValue;
+                self.magnitudeSteps = response.features.map((i) => {index ++; return {[index]: i.attributes.Magnitude}});
+                let magnitudeArray = JSON.parse(JSON.stringify(self.magnitudeSteps));
+                magnitudeArray.forEach(function(obj) {
+                  let key = Object.keys(obj);
+                  let value = Object.values(obj)
+                  if(Number(value) === self.magnitudeValue){
+                    self.currentMagnitudeIndex = Number(key);
+                  }
+                })
+                self.precipMagnitude = self.currentMagnitudeIndex;
+              }else{
+                self.magnitudeSteps = response.features.map((i) => {index ++; return {[index]: i.attributes.Magnitude}});
+                self.precipMagnitude = self.currentMagnitudeIndex;
+              }
+              // Reset this to false
+              self.durationChangedFromTable = false;
           }
         };
 
@@ -224,6 +243,27 @@
       },
       "$store.state.noChangeValue": function () {
         this.noChange = this.$store.state.noChangeValue;
+      },
+      "$store.state.durationValue": function () {
+        let self = this;
+        // Watch for value changes from NWIS table
+        this.durationValue = this.$store.state.durationValue;
+        this.durationChangedFromTable = true;
+        // Get the duration index that matches the value to change the slider
+        let durationIndex;
+        this.durationSteps.forEach(function(step) {
+          Object.keys(step).forEach(function(key) {
+            if(step[key] === self.durationValue){
+              durationIndex = key;
+            }
+          });
+        });
+        // ChangeMagnitude will be called when this is changed
+        this.$store.commit("getPrecipDuration", durationIndex);
+      },
+      "$store.state.magnitudeValue": function () {
+        // Watch for value changes from NWIS table
+        this.magnitudeFromTable = this.$store.state.magnitudeValue;
       },
     },
     computed: {
