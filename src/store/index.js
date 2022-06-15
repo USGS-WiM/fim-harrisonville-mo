@@ -15,6 +15,8 @@ export default new Vuex.Store({
     floodStage: 4.5,
     basemapState: "Topo",
     moistureState: "Normal",
+    slidersChanged: false,
+    lastUpdated: null,
   },
   mutations: {
     toggleDrawerState (state, data) {
@@ -47,6 +49,12 @@ export default new Vuex.Store({
     getMoistureState(state, moistureState) {
       state.moistureState = moistureState;
     },
+    getSlidersChanged(state, slidersChanged) {
+      state.slidersChanged = slidersChanged;
+    },
+    getLastUpdated(state, lastUpdated) {
+      state.lastUpdated = lastUpdated;
+    },
   },
   getters : {
     drawerState: (state) => state.drawerState,
@@ -59,6 +67,8 @@ export default new Vuex.Store({
     floodStage: (state) => state.floodStage,
     basemapState: (state) => state.basemapState,
     moistureState: (state) => state.moistureState,
+    slidersChanged: (state) => state.slidersChanged,
+    lastUpdated: (state) => state.lastUpdated,
   },
   actions: {
   },

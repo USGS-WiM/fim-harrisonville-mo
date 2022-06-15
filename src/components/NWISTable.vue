@@ -4,10 +4,16 @@
     hide-default-footer
     :headers="headers"
     :items="nwisDuration"
-    disable-sort
-    @click:row="selectRow"
-    :single-select="true"
-    class="selected">
+    disable-sort>
+    <template v-slot:body="{ items }">
+      <tbody>
+        <tr v-for="item in items" :key="item.duration" @click="selectRow(item)" :class="{'selected': item.isSelected}">
+          <td>{{ item.date }}</td>
+          <td>{{ item.duration }}</td>
+          <td>{{ item.precip }}</td>
+        </tr>
+      </tbody>
+    </template>
   </v-data-table>
 </template>
 
@@ -36,15 +42,18 @@ export default {
         let self = this;
         let nwisURL = `https://nwis.waterservices.usgs.gov/nwis/iv/?format=nwjson&sites=383843094205501&parameterCd=00045&period=P1D`;
         let durationDates = []
+        // Make sure time zone is CST/CDT, which is what NWIS is returning for Harrisonville
+        const now = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' }));
+        let formatted_now = `${self.months[now.getMonth()]} ${now.getDate()} at ${now.getHours().toString().length === 1 ? now.getHours().toString().padStart(2, '0') : now.getHours()}:${now.getMinutes().toString().length === 1 ? now.getMinutes().toString().padStart(2, '0') : now.getMinutes()}`
+        this.$store.commit("getLastUpdated", formatted_now);
         // Get the dates/times for each duration from now
         this.durations.forEach(duration => {
-            // Make sure time zone is CST/CDT, which is what NWIS is returning for Harrisonville
-            let now = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' }));
+            let now_copy = new Date(now);
             if(duration !== 0.5){
-                durationDates.push({"date": (new Date(now.setHours(now.getHours() - duration))), "duration": duration})
+                durationDates.push({"date": (new Date(now_copy.setHours(now_copy.getHours() - duration))), "duration": duration})
             }else{
                 // Need to handle 0.5 with minutes, not hours
-                durationDates.push({"date": (new Date(now.setMinutes(now.getMinutes() - 30))), "duration": duration})
+                durationDates.push({"date": (new Date(now_copy.setMinutes(now_copy.getMinutes() - 30))), "duration": duration})
             }
         })
 
@@ -65,7 +74,6 @@ export default {
             // Get max precipitation value to highlight on map
             let sortedArray = JSON.parse(JSON.stringify(self.nwisDuration.sort((a, b) => b.precip - a.precip)));
             let maxValues = sortedArray[0];
-            // let maxValues = {"duration": 24, "precip": 3}
             self.selectRow(maxValues);
           }
         };
@@ -86,10 +94,10 @@ export default {
               self.closestAfter = seriesDate;
               self.closestAfterPrecip = series[1];
               if(pair.date - self.closestBefore > self.closestAfter - pair.date){
-                self.nwisDuration.push({"date": `${self.months[self.closestAfter.getMonth()]} ${self.closestAfter.getDate()} ${self.closestAfter.getHours().toString().length === 1 ? self.closestAfter.getHours().toString().padStart(2, '0') : self.closestAfter.getHours()}:${self.closestAfter.getMinutes().toString().length === 1 ? self.closestAfter.getMinutes().toString().padStart(2, '0') : self.closestAfter.getMinutes()}`, "duration": pair.duration, "precip": self.closestAfterPrecip})
+                self.nwisDuration.push({"date": `${self.months[self.closestAfter.getMonth()]} ${self.closestAfter.getDate()} ${self.closestAfter.getHours().toString().length === 1 ? self.closestAfter.getHours().toString().padStart(2, '0') : self.closestAfter.getHours()}:${self.closestAfter.getMinutes().toString().length === 1 ? self.closestAfter.getMinutes().toString().padStart(2, '0') : self.closestAfter.getMinutes()}`, "duration": pair.duration, "precip": self.closestAfterPrecip, "isSelected": false})
                 done = true;
               }else{
-                self.nwisDuration.push({"date": `${self.months[self.closestBefore.getMonth()]} ${self.closestBefore.getDate()} ${self.closestBefore.getHours().toString().length === 1 ? self.closestBefore.getHours().toString().padStart(2, '0') : self.closestBefore.getHours()}:${self.closestBefore.getMinutes().toString().length === 1 ? self.closestBefore.getMinutes().toString().padStart(2, '0') : self.closestBefore.getMinutes()}`, "duration": pair.duration, "precip": self.closestBeforePrecip})
+                self.nwisDuration.push({"date": `${self.months[self.closestBefore.getMonth()]} ${self.closestBefore.getDate()} ${self.closestBefore.getHours().toString().length === 1 ? self.closestBefore.getHours().toString().padStart(2, '0') : self.closestBefore.getHours()}:${self.closestBefore.getMinutes().toString().length === 1 ? self.closestBefore.getMinutes().toString().padStart(2, '0') : self.closestBefore.getMinutes()}`, "duration": pair.duration, "precip": self.closestBeforePrecip, "isSelected": false})
                 done = true;
               }
             }
@@ -97,13 +105,29 @@ export default {
         });
     },
     selectRow(row) {
-      (row.isSelected) ? false : true;
+      // Reset previsouly selected
+      this.nwisDuration.map(item => {item.isSelected = false})
+      let index = this.nwisDuration.map(function(a) { return a.duration; }).indexOf(row.duration);
+      // Set this row as selected
+      this.nwisDuration[index].isSelected = !row.isSelected;
       this.$store.commit("getDurationValue", row.duration);
       this.$store.commit("getMagnitudeValue", row.precip);
+    },
+    removeAllSelected() {
+      // Reset previsouly selected
+      this.nwisDuration.map(item => {item.isSelected = false})
+      this.$store.commit("getSlidersChanged", false);
     }
   },
   mounted() {
     this.getNWISData();
+  },
+  watch: {
+    "$store.state.slidersChanged": function () {
+      if(this.$store.state.slidersChanged){
+        this.removeAllSelected();
+      }
+    },
   },
 }
 </script>
@@ -112,5 +136,10 @@ export default {
 <style scoped>
 .selected {
   font-weight: bold;
+  background-color: #cce4f7;
+}
+
+tr {
+  cursor: pointer;
 }
 </style>
