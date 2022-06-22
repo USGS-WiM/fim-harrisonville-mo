@@ -119,6 +119,7 @@
                 max="4.5"
                 min="0.5"
                 type="number"
+                @click="removeNWISSelections()"
               >
               </v-slider>
             </v-card-text>
@@ -137,6 +138,7 @@
                 tick-size="4"
                 max="10"
                 min="1"
+                @click="removeNWISSelections()"
               >
               </v-slider>
             </v-card-text>
@@ -160,21 +162,39 @@
         </v-alert>
       </v-expansion-panel-content>
     </v-expansion-panel>
+    <v-expansion-panel>
+      <v-expansion-panel-header disable-icon-rotate>
+        Recent Precipitation Conditions
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on, attrs }">
+            <v-icon v-bind="attrs" v-on="on">mdi-information-outline</v-icon>
+          </template>
+          <span>Select a row to display the precipitation condition on the map most closely corresponding to the duration and magnitude values.</span>
+        </v-tooltip>
+      </v-expansion-panel-header>
+      <v-expansion-panel-content>
+        <p class="data-last-updated">Data Last Retrieved from NWIS on {{lastUpdated}}</p>
+        <v-container class="px-0" fluid>
+          <NWISTable></NWISTable>
+        </v-container>
+      </v-expansion-panel-content>
+    </v-expansion-panel>
   </v-expansion-panels>
 </template>
 
 <script>
   import RunoffModal from '../components/RunoffModal';
+  import NWISTable from '../components/NWISTable';
 
   export default {
     components: {
-      RunoffModal
+      RunoffModal,
+      NWISTable
     },
     data () {
       return {
         checkbox: true,
-        panel: [1],
-        // durationValues: [0.5, 1, 2, 3, 4, 6, 8, 12, 24],
+        panel: [1, 2],
         magnitudeDisplayValues: [],
         durationSteps: [{0.5: 0.5}, {1: 1}, {1.5: 2}, {2: 3}, {2.5: 4}, {3: 6}, {3.5: 8}, {4: 12}, {4.5: 24}],
         magnitudeSteps: [],
@@ -192,10 +212,12 @@
         currentMagnitudeIndex: 10,
         nullValue: false,
         noChange: false,
+        durationChangedFromTable: false,
+        magnitudeOnlyChangedFromTable: false,
+        magnitudeFromTable: null,
+        slidersChanged: false,
+        lastUpdated: null,
       }
-    },
-    mounted() {
-      this.changeMagnitude();
     },
     methods: {
     changeMagnitude() {
@@ -209,13 +231,36 @@
               self.magnitudeTicks = response.features.map(i => {return i.attributes.Magnitude});
               self.magnitudeDisplayValues = self.magnitudeTicks;
               let index = 0;
-              self.magnitudeSteps = response.features.map((i) => {index ++; return {[index]: i.attributes.Magnitude}});
-              self.precipMagnitude = self.currentMagnitudeIndex;
+              // Get closest magnitude display value for current value
+              if(self.durationChangedFromTable || self.magnitudeOnlyChangedFromTable){
+                self.magnitudeValue = self.magnitudeDisplayValues.reduce((a, b) => Math.abs(b - self.magnitudeFromTable) < Math.abs(a - self.magnitudeFromTable) ? b : a);
+                self.magnitudeDisplayed = self.magnitudeValue;
+                self.magnitudeSteps = response.features.map((i) => {index ++; return {[index]: i.attributes.Magnitude}});
+                let magnitudeArray = JSON.parse(JSON.stringify(self.magnitudeSteps));
+                magnitudeArray.forEach(function(obj) {
+                  let key = Object.keys(obj);
+                  let value = Object.values(obj)
+                  if(Number(value) === self.magnitudeValue){
+                    self.currentMagnitudeIndex = Number(key);
+                  }
+                })
+                self.precipMagnitude = self.currentMagnitudeIndex;
+              }else{
+                self.magnitudeSteps = response.features.map((i) => {index ++; return {[index]: i.attributes.Magnitude}});
+                self.precipMagnitude = self.currentMagnitudeIndex;
+              }
+              // Reset this to false
+              self.durationChangedFromTable = false;
+              self.magnitudeOnlyChangedFromTable = false;
           }
         };
 
         httpRequest.open("GET", tableURL, true);
         httpRequest.send();
+      },
+      removeNWISSelections() {
+        // Remove highlighted rows in NWIS table
+        this.$store.commit("getSlidersChanged", true);
       }
     },
     watch: {
@@ -224,6 +269,39 @@
       },
       "$store.state.noChangeValue": function () {
         this.noChange = this.$store.state.noChangeValue;
+      },
+      "$store.state.durationValue": function () {
+        let self = this;
+        // Watch for value changes from NWIS table
+        this.durationValue = this.$store.state.durationValue;
+        this.durationChangedFromTable = true;
+        this.magnitudeOnlyChangedFromTable = false;
+        // Get the duration index that matches the value to change the slider
+        let durationIndex;
+        this.durationSteps.forEach(function(step) {
+          Object.keys(step).forEach(function(key) {
+            if(step[key] === self.durationValue){
+              durationIndex = key;
+            }
+          });
+        });
+        // ChangeMagnitude will be called when this is changed
+        this.$store.commit("getPrecipDuration", durationIndex);
+      },
+      "$store.state.magnitudeValue": function () {
+        // Watch for value changes from NWIS table
+        this.magnitudeFromTable = this.$store.state.magnitudeValue;
+        if(!this.durationChangedFromTable){
+          this.magnitudeOnlyChangedFromTable = true;
+        }
+        
+        // If magnitude changed from nwis table but duration did not, need to update slider and map layer
+        if(this.magnitudeOnlyChangedFromTable){
+          this.changeMagnitude();
+        }
+      },
+      "$store.state.lastUpdated": function () {
+        this.lastUpdated = this.$store.state.lastUpdated;
       },
     },
     computed: {
@@ -280,10 +358,11 @@
           return this.$store.state.moistureState;
         },
         set(value) {
+          this.$store.commit("getSlidersChanged", true);
           this.$store.commit("getMoistureState", value);
         },
       },
-    },
+    }
   }
 </script>
 <style>
@@ -342,5 +421,11 @@
 
 .moistureButtonDiv {
   width: 100%;
+}
+
+.data-last-updated {
+    color: rgba(0, 0, 0, 0.6);
+    font-size: 12px;
+    text-align: center;
 }
 </style>

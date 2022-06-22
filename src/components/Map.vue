@@ -102,6 +102,9 @@ export default {
       selectedDepthGrid: 6,
       precipGageLayer: null,
       studyboundsLayer: null,
+      // https://nwis.waterservices.usgs.gov/nwis/iv/?format=nwjson&sites=383843094205501&parameterCd=00045&period=PT30M
+      // nwisURL: "https://nwis.waterservices.usgs.gov/nwis/iv/?format=nwjson&sites=383843094205501&parameterCd=00045&period=PT1H"
+      nwisURL: "https://nwis.waterservices.usgs.gov/nwis/iv/?format=nwjson&sites=383843094205501&parameterCd=00045&period=PT1D"
     };
   },
   methods: {
@@ -163,7 +166,9 @@ export default {
       httpRequest.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
             let response = JSON.parse(this.responseText);
-            self.getPolygon(Object.values(response.features[0].attributes)[0])
+            if(response.features.length > 0){
+              self.getPolygon(Object.values(response.features[0].attributes)[0])
+            }
         }
       };
 
