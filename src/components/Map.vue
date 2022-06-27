@@ -157,6 +157,9 @@ export default {
         style: {color: '#648BD9', weight: 0, fillOpacity: 0.75},
         opacity: 1
       })
+
+      //create scale icon
+      L.control.scale({ position: 'bottomleft' }).addTo(this.map);
     },
     queryTable(duration, magnitude, moisture) {
       let self = this;
