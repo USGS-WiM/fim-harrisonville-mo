@@ -130,7 +130,7 @@
         <v-card-actions class="footer">
           <!-- Contact -->
           <div class="contact">
-            For more information about the FIM Web Interface please contact <a href="https://wim.usgs.gov" target="_blank"><img src="../assets/wim_abbr_black.png"></a>
+            For more information about this web application please contact <a href="https://wim.usgs.gov" target="_blank"><img src="../assets/wim_abbr_black.png"></a>
           </div>
           <v-spacer></v-spacer>
           <div>
