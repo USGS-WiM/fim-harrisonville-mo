@@ -63,7 +63,7 @@
 							<div class="user-guide-item-image"><img src="../images/userguide/precip_duration.png"/></div>
                         </div>
                         <div class="user-guide-item">
-							<p><b>Flood Scenarios - Precipitation Magnitude</b>The Precipitation Magnitude Slider allows the user to select an amount of precipitation and see the corresponding flood extent.</p>
+							<p><b>Flood Scenarios - Precipitation Magnitude</b>The Precipitation Magnitude Slider allows the user to select an amount of precipitation, in combination with the Precipitation Duration Slider, to see the corresponding flood extent.</p>
 							<div class="user-guide-item-image"><img src="../images/userguide/precip_magnitude.png"/></div>
                         </div>                        
                         <div class="user-guide-item">
