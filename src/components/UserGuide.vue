@@ -59,7 +59,7 @@
 							<div class="user-guide-item-image"><img src="../images/userguide/moisturecondition.png"/></div>
 						</div>
                         <div class="user-guide-item">
-							<p><b>Flood Scenarios - Precipitation Duration</b>The Precipitation Duration Slider allows the user to select a period of precipitation time and see the corresponding flood extent.</p>
+							<p><b>Flood Scenarios - Precipitation Duration</b>The Precipitation Duration Slider allows the user to select a period of precipitation duration, in combination with the Precipitation Magnitude Slider, to see the corresponding flood extent.</p>
 							<div class="user-guide-item-image"><img src="../images/userguide/precip_duration.png"/></div>
                         </div>
                         <div class="user-guide-item">
