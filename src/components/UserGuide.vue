@@ -71,7 +71,7 @@
 							<div class="user-guide-item-image"><img src="../images/userguide/waterdepth.png"/></div>
                         </div>
                         <div class="user-guide-item">
-                            <p><b>Recent Precipitation Conditions</b>The "Recent Precipitation Conditions" sidebar allows a user to select and highlight specic areas that recently recieved precipitation.</p>
+                            <p><b>Recent Precipitation Conditions</b>The "Recent Precipitation Conditions" sidebar allows a user to see potential flood extents based on recent precipitation conditions.</p>
 							<div class="user-guide-item-image"><img src="../images/userguide/recent_precip.png"/></div>                        
                     </div>
                 </div>
