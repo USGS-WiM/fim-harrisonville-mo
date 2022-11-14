@@ -98,7 +98,7 @@ export default {
       legendLoaded: false,
       legendInit: false,
       depthgridLayer: null,
-      floodStageDict: [{1: 6}, {1.5: 5}, {2: 4}, {2.5: 3}, {3: 2}, {3.5: 1}, {4: 0}],
+      floodStageDict: [{1: 0}, {1.5: 1}, {2: 2}, {2.5: 3}, {3: 4}, {3.5: 5}, {4: 6}],
       selectedDepthGrid: 6,
       precipGageLayer: null,
       studyboundsLayer: null,
