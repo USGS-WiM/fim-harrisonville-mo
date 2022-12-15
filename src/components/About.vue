@@ -64,7 +64,7 @@
                       <a class="link" href="https://waterdata.usgs.gov/mo/nwis/uv/?site_no=383843094205501" target="_blank">View Site on NWIS</a>
                     </v-btn>
                     <v-btn class="link-btn" color="primary">
-                      <a class="link" href="https://water.usgs.gov/wateralert/subscribe2/?site_no=383843094205501&parm=00045" target="_blank">Subscribe to WaterAlert!</a>
+                      <a class="link" href="https://accounts.waterdata.usgs.gov/wateralert/my-alerts/#siteNumber=383843094205501" target="_blank">Subscribe to WaterAlert!</a>
                     </v-btn>
                   </div>
                   <h2>
