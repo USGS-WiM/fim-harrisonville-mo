@@ -73,8 +73,8 @@
                   <h4>
                     SIR
                   </h4>
-                  <p>Heimann, D.C. and Rydlund, P.H. Jr., 2022, Precipitation-Driven Flood-Inundation Mapping of Muddy Creek at Harrisonville, Missouri: U.S. Geological Survey Scientific Investigations Report 2022-XXXX, XX p. 
-                    <a href="https://doi.org/XXXX" target="_blank">https://doi.org/XXXX</a>
+                  <p>Heimann, D.C. and Rydlund, P.H. Jr., 2022, Precipitation-Driven Flood-Inundation Mapping of Muddy Creek at Harrisonville, Missouri: U.S. Geological Survey Scientific Investigations Report 2022-5084, 18 p. 
+                    <a href="https://pubs.er.usgs.gov/publication/sir20225084" target="_blank">https://pubs.er.usgs.gov/publication/sir20225084</a>
                   </p>
                   <h4>
                     ScienceBase Data Release
