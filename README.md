@@ -1,3 +1,7 @@
+## Update, 2024-09-19: Deprecated 
+
+### This repository has been superseded by a code.usgs.gov repository and is no longer being actively maintained. [Please see [Fim Harrisonville, MO]([https://code.usgs.gov/WiM/fim-harrisonville-mo]) for latest updates related to this effort.]
+
 ![WiM](wim.png)
 
 
